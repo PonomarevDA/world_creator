@@ -4,13 +4,11 @@ import copy
 import numpy
 
 # Global parameters
-OFFSET_X = float()
-OFFSET_Y = float()
+START_X = float()
+START_Y = float()
 SIZE_X = float()
 SIZE_Y = float()
 SIZE_Z = float()
-BORDER_WIDTH = float()
-MAX_BORDER_LEN = float()
 
 class Point:
     x = float()
@@ -23,15 +21,18 @@ class Point:
     def getString(self):
         return str(self.x) + " " + str(self.y) + " " + str(self.z) + " 0 0 0"
 
-def read_config():
-    global OFFSET_X, OFFSET_Y, SIZE_X, SIZE_Y, SIZE_Z, BORDER_WIDTH, MAX_BORDER_LEN
-    OFFSET_X = float(8)
-    OFFSET_Y = float(8)
-    SIZE_X = float(18)
-    SIZE_Y = float(18)
+def set_config(start_x, start_y, size_x, size_y):
+    global START_X, START_Y, SIZE_X, SIZE_Y, SIZE_Z
+    MIN_MAP_SIZE = 4
+    MAX_MAP_SIZE = 40
+    DEFAULT_MAP_SIZE = 18
+    DEFAULT_POSE = 1
+    SIZE_X = size_x if ((size_x >= MIN_MAP_SIZE) and (size_x <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
+    SIZE_Y = size_y if ((size_y >= MIN_MAP_SIZE) and (size_y <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
+    START_X = start_x if ((start_x >= 0) and (start_x <= SIZE_X)) else DEFAULT_POSE
+    START_Y = start_y if ((start_y >= 0) and (start_y <= SIZE_Y)) else DEFAULT_POSE
     SIZE_Z = float(0.5)
-    BORDER_WIDTH = float(0.1)
-    MAX_BORDER_LEN = float(3)
+    print("Start: " + str(START_X) + "/" + str(START_Y) + ", map size: "+ str(SIZE_X) + "/" + str(SIZE_Y))
 
 def show_tree(root):
     print(etree.tostring(root, pretty_print=True))
@@ -67,27 +68,38 @@ add_box.counter = 0
 
 
 def add_border(sdf_root):
-    global OFFSET_X, OFFSET_Y, SIZE_X, SIZE_Y, SIZE_Z, BORDER_WIDTH, MAX_BORDER_LEN
+    global START_X, START_Y, SIZE_X, SIZE_Y, SIZE_Z
+    BORDER_WIDTH = float(0.1)
+    MAX_BORDER_LEN = float(1)
 
-    x_range = numpy.arange(OFFSET_X - SIZE_X/2 + MAX_BORDER_LEN/2, OFFSET_X + SIZE_X/2, MAX_BORDER_LEN)
-    y_range = numpy.arange(OFFSET_Y - SIZE_Y/2 + MAX_BORDER_LEN/2, OFFSET_Y + SIZE_Y/2, MAX_BORDER_LEN)
+    left_border_mid = -START_X
+    right_border_mid = SIZE_X - START_X
+    top_border_mid = SIZE_Y - START_Y
+    bottom_border_mid = -START_Y
+
+    x_range = numpy.arange(left_border_mid + MAX_BORDER_LEN/2, right_border_mid, MAX_BORDER_LEN)
+    y_range = numpy.arange(bottom_border_mid + MAX_BORDER_LEN/2, top_border_mid, MAX_BORDER_LEN)
     vertical_border_size = Point(BORDER_WIDTH, MAX_BORDER_LEN, SIZE_Z)
     horizontal_border_size = Point(MAX_BORDER_LEN, BORDER_WIDTH, SIZE_Z)
-    right_pos_x = OFFSET_X + SIZE_X/2 + BORDER_WIDTH/2
-    left_pos_x = OFFSET_X - SIZE_X/2 - BORDER_WIDTH/2
-    top_pos_y = OFFSET_Y + SIZE_Y/2 + BORDER_WIDTH/2
-    bottom_pos_y = OFFSET_Y - SIZE_Y/2 - BORDER_WIDTH/2
+
+    left_border_with_width = left_border_mid - BORDER_WIDTH/2
+    right_border_with_width = right_border_mid + BORDER_WIDTH/2
+    top_border_with_width = top_border_mid + BORDER_WIDTH/2
+    bottom_border_with_width = bottom_border_mid - BORDER_WIDTH/2
 
     for pos_y in y_range:
-        add_box(sdf_root, Point(right_pos_x, pos_y, SIZE_Z), vertical_border_size)
-        add_box(sdf_root, Point(left_pos_x, pos_y, SIZE_Z), vertical_border_size) 
+        add_box(sdf_root, Point(left_border_with_width, pos_y, SIZE_Z), vertical_border_size)
+        add_box(sdf_root, Point(right_border_with_width, pos_y, SIZE_Z), vertical_border_size) 
     for pos_x in x_range:
-        add_box(sdf_root, Point(pos_x, top_pos_y, SIZE_Z), horizontal_border_size)
-        add_box(sdf_root, Point(pos_x, bottom_pos_y, SIZE_Z), horizontal_border_size)
+        add_box(sdf_root, Point(pos_x, top_border_with_width, SIZE_Z), horizontal_border_size)
+        add_box(sdf_root, Point(pos_x, bottom_border_with_width, SIZE_Z), horizontal_border_size)
 
 
 def add_obstacle(sdf_root, x, y):
     global SIZE_X, SIZE_Z
-    box_position = Point((SIZE_X/2 - x) * (2), (SIZE_Y/2 - y) * (2), 0.5)
-    add_box(sdf_root, box_position, Point(2, 2, 0.5))
+    OBSTACLE_X = 2
+    OBSTACLE_Y = 2
+    OBSTACLE_Z = 0.5
+    box_position = Point((SIZE_X/2 - x) * (2), (SIZE_Y/2 - y) * (2), OBSTACLE_Z)
+    add_box(sdf_root, box_position, Point(OBSTACLE_X, OBSTACLE_Y, OBSTACLE_Z))
 

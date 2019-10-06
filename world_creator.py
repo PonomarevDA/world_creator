@@ -26,7 +26,11 @@ def add_obtacles_like_in_regulations():
     add_obstacle(sdf_root, 3, 6)
 
 if __name__=="__main__":
-    read_config()
+    start_x = 1
+    start_y = 1
+    size_x = 18
+    size_y = 18
+    set_config(start_x, start_y, size_x, size_y)
     sdf_root = create_empty_world()
     add_border(sdf_root)
     add_obtacles_like_in_regulations()
