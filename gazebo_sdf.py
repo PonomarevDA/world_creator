@@ -57,30 +57,61 @@ def set_box_params(root, box_position, box_size, counter):
     link.find("visual").find("geometry").find("box").find("size").text = box_size_text
 
 
-def add_box(sdf_root, box_position, box_size):
-    add_box.counter += 1
+def spawn_box(sdf_root, box_position, box_size):
+    """ 
+    @brief Spawn box with defined size in defined position
+    @note You can spawn it in 2 variants:
+    1. obstacle: on center of cell in template [odd; odd], for example [3; 1], [3; 3], [3; 5]
+    2. border: on center of cell in template [even; odd] or [odd; even], for example [1; 0], [2; 1], [4; 3]
+    @param box_position - position in high level abstraction, in other words, start offset was taken into account.
+    """
+    spawn_box.counter += 1
     box_root = etree.parse("box.world").getroot()
-    set_box_params(box_root, box_position, box_size, add_box.counter)
-    world = sdf_root.find("world")
+    box_position.x -= START_X
+    box_position.y -= START_Y
+    set_box_params(box_root, box_position, box_size, spawn_box.counter)
     sdf_root.find("world").insert(0, copy.deepcopy(box_root) )
     return sdf_root
-add_box.counter = 0
+spawn_box.counter = 0
 
 
-def add_border(sdf_root):
-    global START_X, START_Y, SIZE_X, SIZE_Y, SIZE_Z
+def add_vertical_border(sdf_root, pos_x, pos_y):
+    """ 
+    @brief Spawn vertical border on edge of cell
+    """
+    global SIZE_Z
+    BORDER_WIDTH = float(0.1)
+    MAX_BORDER_LEN = float(1)
+    vertical_border_size = Point(BORDER_WIDTH, MAX_BORDER_LEN, SIZE_Z)
+    spawn_box(sdf_root, Point(pos_x, pos_y, SIZE_Z), vertical_border_size)
+
+
+def add_horisontal_border(sdf_root, pos_x, pos_y):
+    """ 
+    @brief Spawn horisontal border on edge of cell
+    """
+    global SIZE_Z
+    BORDER_WIDTH = float(0.1)
+    MAX_BORDER_LEN = float(1)
+    horizontal_border_size = Point(MAX_BORDER_LEN, BORDER_WIDTH, SIZE_Z)
+    spawn_box(sdf_root, Point(pos_x, pos_y, SIZE_Z), horizontal_border_size)
+
+
+def add_map_borders(sdf_root):
+    """ 
+    @brief Spawn borders of edges of world 
+    """
+    global SIZE_X, SIZE_Y
     BORDER_WIDTH = float(0.1)
     MAX_BORDER_LEN = float(1)
 
-    left_border_mid = -START_X
-    right_border_mid = SIZE_X - START_X
-    top_border_mid = SIZE_Y - START_Y
-    bottom_border_mid = -START_Y
+    left_border_mid = 0
+    right_border_mid = SIZE_X
+    top_border_mid = SIZE_Y
+    bottom_border_mid = 0
 
     x_range = numpy.arange(left_border_mid + MAX_BORDER_LEN/2, right_border_mid, MAX_BORDER_LEN)
     y_range = numpy.arange(bottom_border_mid + MAX_BORDER_LEN/2, top_border_mid, MAX_BORDER_LEN)
-    vertical_border_size = Point(BORDER_WIDTH, MAX_BORDER_LEN, SIZE_Z)
-    horizontal_border_size = Point(MAX_BORDER_LEN, BORDER_WIDTH, SIZE_Z)
 
     left_border_with_width = left_border_mid - BORDER_WIDTH/2
     right_border_with_width = right_border_mid + BORDER_WIDTH/2
@@ -88,18 +119,25 @@ def add_border(sdf_root):
     bottom_border_with_width = bottom_border_mid - BORDER_WIDTH/2
 
     for pos_y in y_range:
-        add_box(sdf_root, Point(left_border_with_width, pos_y, SIZE_Z), vertical_border_size)
-        add_box(sdf_root, Point(right_border_with_width, pos_y, SIZE_Z), vertical_border_size) 
+        add_vertical_border(sdf_root, left_border_with_width, pos_y)
+        add_vertical_border(sdf_root, right_border_with_width, pos_y)
     for pos_x in x_range:
-        add_box(sdf_root, Point(pos_x, top_border_with_width, SIZE_Z), horizontal_border_size)
-        add_box(sdf_root, Point(pos_x, bottom_border_with_width, SIZE_Z), horizontal_border_size)
+        add_horisontal_border(sdf_root, pos_x, top_border_with_width)
+        add_horisontal_border(sdf_root, pos_x, bottom_border_with_width)
 
 
-def add_obstacle(sdf_root, x, y):
+def add_big_obstacle(sdf_root, cell_x, cell_y):
+    """ 
+    @brief Spawn big obstacle with size 2x2 on middle of cell
+    @param cell_x - x number of cell (from 1 to max)
+    @param cell_y - y index of cell (from 1 to max)
+    """
     global SIZE_X, SIZE_Z
     OBSTACLE_X = 2
     OBSTACLE_Y = 2
     OBSTACLE_Z = 0.5
-    box_position = Point((SIZE_X/2 - x) * (2), (SIZE_Y/2 - y) * (2), OBSTACLE_Z)
-    add_box(sdf_root, box_position, Point(OBSTACLE_X, OBSTACLE_Y, OBSTACLE_Z))
+    OFFSET_X = OBSTACLE_X / 2
+    OFFSET_Y = OBSTACLE_Y / 2
+    box_position_on_map = Point(SIZE_X - cell_x * OBSTACLE_X + OFFSET_X, SIZE_Y - cell_y * OBSTACLE_Y + OFFSET_Y, OBSTACLE_Z)
+    spawn_box(sdf_root, box_position_on_map, Point(OBSTACLE_X, OBSTACLE_Y, OBSTACLE_Z))
 
