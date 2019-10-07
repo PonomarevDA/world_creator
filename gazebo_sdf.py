@@ -153,8 +153,8 @@ class SdfCreator:
         """
         self.box_counter += 1
         box_root = etree.parse("box.world").getroot()
-        box_position.x -= self.START_X
-        box_position.y -= self.START_Y
+        box_position.x += self.START_X - self.SIZE_X
+        box_position.y += self.START_Y - self.SIZE_Y
         self.__setBoxParams(box_root, box_position, box_size)
         self.sdf_root.find("world").insert(0, copy.deepcopy(box_root) )
 

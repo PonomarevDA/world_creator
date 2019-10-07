@@ -16,8 +16,8 @@ def addBigObtaclesLikeInRegulations(sdfCreator):
         sdfCreator.addBigObstacle(cell_with_obstacle[0], cell_with_obstacle[1])
 
 if __name__=="__main__":
-    start_x = 1
-    start_y = 1
+    start_x = 17
+    start_y = 17
     size_x = 18
     size_y = 18
 
@@ -25,7 +25,6 @@ if __name__=="__main__":
     sdfCreator.initWithConfig(start_x, start_y, size_x, size_y)
     sdfCreator.addMapBorders()
     addBigObtaclesLikeInRegulations(sdfCreator)
-    sdfCreator.addTopBorder(2, 1)
     #sdfCreator.showTree()
     sdfCreator.writeWorldToFile("world.world")
 
