@@ -21,6 +21,7 @@ class Point:
     def getString(self):
         return str(self.x) + " " + str(self.y) + " " + str(self.z) + " 0 0 0"
 
+
 def set_config(start_x, start_y, size_x, size_y):
     global START_X, START_Y, SIZE_X, SIZE_Y, SIZE_Z
     MIN_MAP_SIZE = 4
@@ -86,7 +87,7 @@ def add_vertical_border(sdf_root, pos_x, pos_y):
     spawn_box(sdf_root, Point(pos_x, pos_y, SIZE_Z), vertical_border_size)
 
 
-def add_horisontal_border(sdf_root, pos_x, pos_y):
+def add_horizontal_border(sdf_root, pos_x, pos_y):
     """ 
     @brief Spawn horisontal border on edge of cell
     """
@@ -122,9 +123,22 @@ def add_map_borders(sdf_root):
         add_vertical_border(sdf_root, left_border_with_width, pos_y)
         add_vertical_border(sdf_root, right_border_with_width, pos_y)
     for pos_x in x_range:
-        add_horisontal_border(sdf_root, pos_x, top_border_with_width)
-        add_horisontal_border(sdf_root, pos_x, bottom_border_with_width)
+        add_horizontal_border(sdf_root, pos_x, top_border_with_width)
+        add_horizontal_border(sdf_root, pos_x, bottom_border_with_width)
 
+def add_top_border(sdf_root, cell_x, cell_y):
+    """ 
+    @brief Spawn border of cell
+    @param cell_x - x number of cell (from 1 to max)
+    @param cell_y - y index of cell (from 1 to max)
+    """
+    CELL_SIZE_X = 2
+    CELL_SIZE_Y = 2
+    pos_x_1 = SIZE_X - (cell_x * CELL_SIZE_X - 3 * CELL_SIZE_X / 4)
+    pos_x_2 = SIZE_X - (cell_x * CELL_SIZE_X - 1 * CELL_SIZE_X / 4)
+    pos_y = SIZE_Y - cell_y * CELL_SIZE_Y
+    add_horizontal_border(sdf_root, pos_x_1, pos_y)
+    add_horizontal_border(sdf_root, pos_x_2, pos_y)
 
 def add_big_obstacle(sdf_root, cell_x, cell_y):
     """ 
@@ -138,6 +152,7 @@ def add_big_obstacle(sdf_root, cell_x, cell_y):
     OBSTACLE_Z = 0.5
     OFFSET_X = OBSTACLE_X / 2
     OFFSET_Y = OBSTACLE_Y / 2
-    box_position_on_map = Point(SIZE_X - cell_x * OBSTACLE_X + OFFSET_X, SIZE_Y - cell_y * OBSTACLE_Y + OFFSET_Y, OBSTACLE_Z)
-    spawn_box(sdf_root, box_position_on_map, Point(OBSTACLE_X, OBSTACLE_Y, OBSTACLE_Z))
+    pose_x = SIZE_X - cell_x * OBSTACLE_X + OFFSET_X
+    pose_y = SIZE_Y - cell_y * OBSTACLE_Y + OFFSET_Y
+    spawn_box(sdf_root, Point(pose_x, pose_y, OBSTACLE_Z), Point(OBSTACLE_X, OBSTACLE_Y, OBSTACLE_Z))
 

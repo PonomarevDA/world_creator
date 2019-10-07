@@ -24,6 +24,7 @@ if __name__=="__main__":
     sdf_root = create_empty_world()
     add_map_borders(sdf_root)
     add_big_obtacles_like_in_regulations()
+    add_top_border(sdf_root, 2, 1)
     #show_tree(sdf_root)
     write_tree_to_file(sdf_root)
 
