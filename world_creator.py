@@ -9,22 +9,23 @@ import copy
 import numpy
 from gazebo_sdf import *
 
-def add_big_obtacles_like_in_regulations():
+def addBigObtaclesLikeInRegulations(sdfCreator):
     cells_with_big_obstacles = [[8, 9], [8, 8], [8, 7], [8, 5], [8, 4], [6, 8], 
                                 [6, 7], [6, 5], [6, 4], [4, 6], [4, 4], [3, 6]]
     for cell_with_obstacle in cells_with_big_obstacles:
-        add_big_obstacle(sdf_root, cell_with_obstacle[0], cell_with_obstacle[1])
+        sdfCreator.addBigObstacle(cell_with_obstacle[0], cell_with_obstacle[1])
 
 if __name__=="__main__":
     start_x = 1
     start_y = 1
     size_x = 18
     size_y = 18
-    set_config(start_x, start_y, size_x, size_y)
-    sdf_root = create_empty_world()
-    add_map_borders(sdf_root)
-    add_big_obtacles_like_in_regulations()
-    add_top_border(sdf_root, 2, 1)
-    #show_tree(sdf_root)
-    write_tree_to_file(sdf_root)
+
+    sdfCreator = SdfCreator() 
+    sdfCreator.initWithConfig(start_x, start_y, size_x, size_y)
+    sdfCreator.addMapBorders()
+    addBigObtaclesLikeInRegulations(sdfCreator)
+    sdfCreator.addTopBorder(2, 1)
+    #sdfCreator.showTree()
+    sdfCreator.writeWorldToFile("world.world")
 
