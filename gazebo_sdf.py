@@ -3,13 +3,6 @@ from lxml import etree
 import copy
 import numpy
 
-# Global parameters
-START_X = float()
-START_Y = float()
-SIZE_X = float()
-SIZE_Y = float()
-SIZE_Z = float()
-
 class Point:
     x = float()
     y = float()
@@ -46,47 +39,28 @@ class SdfCreator:
         f.write(etree.tostring(self.sdf_root, pretty_print=True))
 
 
-    def addMapBorders(self):
+    def addVerticalBorder(self, edge_x, edge_y):
         """ 
-        @brief Spawn borders of world edges
+        @brief Spawn vertical border on edge of cell
+        @param edge_x - from 0 to size_x/2 
+        @param edge_y - from 1 to size_y/2 
         """
-        BORDER_WIDTH = float(0.1)
-        MAX_BORDER_LEN = float(1)
-
-        left_border_mid = 0
-        right_border_mid = self.SIZE_X
-        top_border_mid = self.SIZE_Y
-        bottom_border_mid = 0
-
-        x_range = numpy.arange(left_border_mid + MAX_BORDER_LEN/2, right_border_mid, MAX_BORDER_LEN)
-        y_range = numpy.arange(bottom_border_mid + MAX_BORDER_LEN/2, top_border_mid, MAX_BORDER_LEN)
-
-        left_border_with_width = left_border_mid - BORDER_WIDTH/2
-        right_border_with_width = right_border_mid + BORDER_WIDTH/2
-        top_border_with_width = top_border_mid + BORDER_WIDTH/2
-        bottom_border_with_width = bottom_border_mid - BORDER_WIDTH/2
-
-        for pos_y in y_range:
-            self.__addVerticalBorder(left_border_with_width, pos_y)
-            self.__addVerticalBorder(right_border_with_width, pos_y)
-        for pos_x in x_range:
-            self.__addHorizontalBorder(pos_x, top_border_with_width)
-            self.__addHorizontalBorder(pos_x, bottom_border_with_width)
+        pos_x = self.SIZE_X - edge_x * self.CELL_SIZE_X
+        pos_y = self.SIZE_Y - edge_y * self.CELL_SIZE_Y + self.CELL_SIZE_Y/2
+        vertical_border_size = Point(self.BORDER_WIDTH, self.MAX_BORDER_LEN, self.SIZE_Z)
+        self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), vertical_border_size)
 
 
-    def addTopBorder(self, cell_x, cell_y):
+    def addHorizontalBorder(self, edge_x, edge_y):
         """ 
-        @brief Spawn border of cell
-        @param cell_x - x number of cell (from 1 to max)
-        @param cell_y - y index of cell (from 1 to max)
+        @brief Spawn horisontal border on edge of cell
+        @param edge_x - from 1 to size_x/2 
+        @param edge_y - from 0 to size_y/2 
         """
-        CELL_SIZE_X = 2
-        CELL_SIZE_Y = 2
-        pos_x_1 = self.SIZE_X - (cell_x * CELL_SIZE_X - 3 * CELL_SIZE_X / 4)
-        pos_x_2 = self.SIZE_X - (cell_x * CELL_SIZE_X - 1 * CELL_SIZE_X / 4)
-        pos_y = self.SIZE_Y - cell_y * CELL_SIZE_Y
-        self.__addHorizontalBorder(pos_x_1, pos_y)
-        self.__addHorizontalBorder(pos_x_2, pos_y)
+        pos_x = self.SIZE_X - edge_x * self.CELL_SIZE_X + self.CELL_SIZE_X/2
+        pos_y = self.SIZE_Y - edge_y * self.CELL_SIZE_Y
+        horizontal_border_size = Point(self.MAX_BORDER_LEN, self.BORDER_WIDTH, self.SIZE_Z)
+        self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), horizontal_border_size)
 
 
     def addBigObstacle(self, cell_x, cell_y):
@@ -159,26 +133,6 @@ class SdfCreator:
         self.sdf_root.find("world").insert(0, copy.deepcopy(box_root) )
 
 
-    def __addVerticalBorder(self, pos_x, pos_y):
-        """ 
-        @brief Spawn vertical border on edge of cell
-        """
-        BORDER_WIDTH = float(0.1)
-        MAX_BORDER_LEN = float(1)
-        vertical_border_size = Point(BORDER_WIDTH, MAX_BORDER_LEN, self.SIZE_Z)
-        self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), vertical_border_size)
-
-
-    def __addHorizontalBorder(self, pos_x, pos_y):
-        """ 
-        @brief Spawn horisontal border on edge of cell
-        """
-        BORDER_WIDTH = float(0.1)
-        MAX_BORDER_LEN = float(1)
-        horizontal_border_size = Point(MAX_BORDER_LEN, BORDER_WIDTH, self.SIZE_Z)
-        self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), horizontal_border_size)
-
-
     sdf_root = etree.Element("root")
     box_counter = 0
     START_X = float(0)
@@ -186,4 +140,9 @@ class SdfCreator:
     SIZE_X = float(0)
     SIZE_Y = float(0)
     SIZE_Z = float(0)
+
+    BORDER_WIDTH = float(0.1)
+    MAX_BORDER_LEN = float(2)
+    CELL_SIZE_X = 2
+    CELL_SIZE_Y = 2
 
