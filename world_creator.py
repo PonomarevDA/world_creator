@@ -4,9 +4,6 @@
 This script create gazebo sdf world with predefined configuration.
 """
 
-from lxml import etree
-import copy
-import numpy
 from gazebo_sdf import *
 
 def addBigObtaclesLikeInRegulations(sdfCreator):
@@ -40,8 +37,7 @@ if __name__=="__main__":
     size_x = 18
     size_y = 18
 
-    sdfCreator = SdfCreator() 
-    sdfCreator.initWithConfig(start_x, start_y, size_x, size_y)
+    sdfCreator = SdfCreator(start_x, start_y, size_x, size_y)
     addMapBorders(sdfCreator, size_x, size_y)
     addBigObtaclesLikeInRegulations(sdfCreator)
     #sdfCreator.showTree()
