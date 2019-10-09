@@ -4,9 +4,6 @@ import copy
 import numpy
 
 class Point:
-    x = float()
-    y = float()
-    z = float()
     def __init__(self, pos_x, pos_y, pos_z):
         self.x = pos_x
         self.y = pos_y
@@ -28,8 +25,8 @@ class SdfCreator:
         self.CELL_SIZE_Y = int(2)
         self.HORIZONTAL_BORDER_SIZE = Point(self.MAX_BORDER_LEN, self.BORDER_WIDTH, self.SIZE_Z)
         self.VERTICAL_BORDER_SIZE = Point(self.BORDER_WIDTH, self.MAX_BORDER_LEN, self.SIZE_Z)
-        self.CELLS_X_AMOUNT = self.SIZE_X / self.CELL_SIZE_X
-        self.CELLS_Y_AMOUNT = self.SIZE_Y / self.CELL_SIZE_Y
+        self.CELLS_X_AMOUNT = int(self.SIZE_X / self.CELL_SIZE_X)
+        self.CELLS_Y_AMOUNT = int(self.SIZE_Y / self.CELL_SIZE_Y)
 
 
     def showTree(self):
@@ -133,25 +130,6 @@ class SdfCreator:
         """
         self.SDF_ROOT = etree.parse("empty_world.world").getroot()
 
-
     # Variables:
     box_counter = 0
-
-    #Input constants:
-    START_X = float()
-    START_Y = float()
-    SIZE_X = float()
-    SIZE_Y = float()
-    SIZE_Z = float()
-
-    #Calculated constants:
-    SDF_ROOT = etree.Element("root")
-    BORDER_WIDTH = float()
-    MAX_BORDER_LEN = float()
-    CELL_SIZE_X = int()
-    CELL_SIZE_Y = int()
-    HORIZONTAL_BORDER_SIZE = Point
-    VERTICAL_BORDER_SIZE = Point
-    CELLS_X_AMOUNT = int()
-    CELLS_Y_AMOUNT = int()
 
