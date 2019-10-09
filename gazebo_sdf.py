@@ -51,20 +51,20 @@ class SdfCreator:
         """ 
         @brief Spawn vertical border on edge of cell
         @param edge_x - from 0 to CELLS_X_AMOUNT 
-        @param edge_y - from 1 to CELLS_Y_AMOUNT
+        @param edge_y - from 0 to CELLS_Y_AMOUNT + 1
         """
         pos_x = edge_x * self.CELL_SIZE_X
-        pos_y = edge_y * self.CELL_SIZE_Y - self.CELL_SIZE_Y/2
+        pos_y = edge_y * self.CELL_SIZE_Y + self.CELL_SIZE_Y/2
         self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), self.VERTICAL_BORDER_SIZE)
 
 
     def addHorizontalBorder(self, edge_x, edge_y):
         """ 
         @brief Spawn horisontal border on edge of cell
-        @param edge_x - from 1 to CELLS_X_AMOUNT
+        @param edge_x - from 0 to CELLS_X_AMOUNT + 1
         @param edge_y - from 0 to CELLS_Y_AMOUNT 
         """
-        pos_x = edge_x * self.CELL_SIZE_X - self.CELL_SIZE_X/2
+        pos_x = edge_x * self.CELL_SIZE_X + self.CELL_SIZE_X/2
         pos_y = edge_y * self.CELL_SIZE_Y
         self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), self.HORIZONTAL_BORDER_SIZE)
 
