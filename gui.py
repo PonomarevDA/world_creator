@@ -30,9 +30,9 @@ class MainWindow(QMainWindow):
         self.cells = list()
         self.horizontalEdge = list()
         self.verticalEdge = list()
-        self.cellsStatus = [[False] * self.CELLS_AMOUNT_X] * (self.CELLS_AMOUNT_Y + 1)
-        self.horizontalEdgeStatus = [[False] * self.CELLS_AMOUNT_X] * (self.CELLS_AMOUNT_Y + 1)
-        self.verticalEdgeStatus = [[False] * (self.CELLS_AMOUNT_X + 1)] * self.CELLS_AMOUNT_Y
+        self.cellsStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X + 1)]
+        self.horizontalEdgeStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X + 1)]
+        self.verticalEdgeStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X + 1)]
         for row in range(self.SIZE_Y,  -1, -1):
             if (row % 2) == 0:
                 heRow = int((self.SIZE_Y - row)/2)  # from 0 to 9
@@ -95,6 +95,13 @@ class MainWindow(QMainWindow):
         self.CELL_SIZE = 30
         self.EDGE_SIZE = 10
         self.MODE = ""
+        self.MODE_CHOOSE_START_POS = "ChooseStartPos"
+        self.MODE_CHOOSE_END_POS = "ChooseEndPos"
+        self.MODE_CHOOSE_BORDERS = "ChooseBorders"
+        self.start_x = None
+        self.start_y = None
+        self.end_x = None
+        self.end_y = None
 
 
     def __addCell(self, row, col):
@@ -131,31 +138,53 @@ class MainWindow(QMainWindow):
         self.horizontalEdge[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
 
 
-    def __butCallback(self, but, status, row=0, col=0):
-        print(str(row) + " " + str(col))
+    def __butCallback(self, but, status, row, col):
         whiteCode = "FFFFFF"
+        blueCode = "0000FF"
+        greenCode = "00FF00"
         redCode = "FF0000"
-        status[row][col] = not status[row][col]
-        if status[row][col] == True:
+        if self.MODE == self.MODE_CHOOSE_BORDERS:
+            print(str(row) + " " + str(col) + " " + self.MODE)
+            status[row][col] = not status[row][col]
+            if status[row][col] == True:
+                self.__setButtonCollor(but[row][col], blueCode)
+            else:
+                self.__setButtonCollor(but[row][col], whiteCode)
+            if (row == self.start_x) and (col == self.start_y):
+                start_x = None
+                start_y = None
+            if (row == self.end_x) and (col == self.end_y):
+                end_x = None
+                end_y = None
+        elif self.MODE == self.MODE_CHOOSE_START_POS:
+            status[row][col] = False
+            if (self.start_x != None) and (self.start_y != None):
+                self.__setButtonCollor(but[self.start_x][self.start_y], whiteCode)
+                status[row][col] = False
             self.__setButtonCollor(but[row][col], redCode)
-            print("set")
-        else:
-            self.__setButtonCollor(but[row][col], whiteCode)
-            print("reset")
-
+            self.start_x = row
+            self.start_y = col
+        elif self.MODE == self.MODE_CHOOSE_END_POS:
+            status[row][col] = False
+            if (self.end_x != None) and (self.end_y != None):
+                self.__setButtonCollor(but[self.end_x][self.end_y], whiteCode)
+                status[row][col] = False
+            self.__setButtonCollor(but[row][col], greenCode)
+            self.end_x = row
+            self.end_y = col
 
     def __ChooseStartPosCallback(self):
-        self.__setMode("ChooseStartPos")
+        self.__setMode(self.MODE_CHOOSE_START_POS)
         print("__ChooseStartPosCallback")
 
 
     def __ChooseEndPosCallback(self):
-        self.__setMode("ChooseEndPose")
+        self.__setMode(self.MODE_CHOOSE_END_POS)
         print("__ChooseEndPosCallback")
 
 
     def __ChooseBordersCallback(self):
-        self.__setMode("ChooseBorders")
+        self.__setMode(self.MODE_CHOOSE_BORDERS)
         print("__ChooseBordersCallback")
 
 
@@ -170,17 +199,17 @@ class MainWindow(QMainWindow):
     def __setMode(self, mode):
         whiteCode = "FFFFFF"
         redCode = "FF0000"
-        if mode == "ChooseStartPos":
+        if mode == self.MODE_CHOOSE_START_POS:
             self.MODE = mode
             self.__setButtonCollor(self.ChooseStartPosButton, redCode)
         else:
             self.__setButtonCollor(self.ChooseStartPosButton, whiteCode)
-        if mode == "ChooseEndPose":
+        if mode == self.MODE_CHOOSE_END_POS:
             self.MODE = mode
             self.__setButtonCollor(self.ChooseEndPosButton, redCode)
         else:
             self.__setButtonCollor(self.ChooseEndPosButton, whiteCode)
-        if mode == "ChooseBorders":
+        if mode == self.MODE_CHOOSE_BORDERS:
             self.MODE = mode
             self.__setButtonCollor(self.ChooseBordersButton, redCode)
         else:
