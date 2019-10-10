@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
         layout = QGridLayout()
         self.__addTableWithButtonsToLayout(layout)
         self.__addOtherButtons(layout)
+        self.__setMode("ChooseStartPos")
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -29,6 +30,9 @@ class MainWindow(QMainWindow):
         self.cells = list()
         self.horizontalEdge = list()
         self.verticalEdge = list()
+        self.cellsStatus = [[False] * self.CELLS_AMOUNT_X] * (self.CELLS_AMOUNT_Y + 1)
+        self.horizontalEdgeStatus = [[False] * self.CELLS_AMOUNT_X] * (self.CELLS_AMOUNT_Y + 1)
+        self.verticalEdgeStatus = [[False] * (self.CELLS_AMOUNT_X + 1)] * self.CELLS_AMOUNT_Y
         for row in range(self.SIZE_Y,  -1, -1):
             if (row % 2) == 0:
                 heRow = int((self.SIZE_Y - row)/2)  # from 0 to 9
@@ -90,53 +94,108 @@ class MainWindow(QMainWindow):
         self.CELLS_AMOUNT_Y = int(self.SIZE_Y / 2)
         self.CELL_SIZE = 30
         self.EDGE_SIZE = 10
+        self.MODE = ""
+
 
     def __addCell(self, row, col):
-        self.cells[row].append( QPushButton(str(col) + "/" + str(row)) )
-        self.cells[row][col].setMinimumSize(QSize(self.CELL_SIZE, self.CELL_SIZE))
-        self.cells[row][col].pressed.connect( lambda r=row, c=col: self.__cellCallback(r, c))
-        self.cells[row][col].setStyleSheet("QPushButton {background-color: #CFFFFF}")
+        self.cells[row].append(QPushButton(str(col) + "/" + str(row)))
+        callbackFunc = lambda b=self.cells, s=self.cellsStatus, r = row, c = col: self.__butCallback(b, s, r, c)
+        butMinSizeX = self.CELL_SIZE
+        butMinSizeY = self.CELL_SIZE
+        self.cells[row][col].pressed.connect(callbackFunc)
+        self.cells[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
+
 
     def __addVerticalEdge(self, row, col):
-        self.verticalEdge[row].append( QPushButton("v") )
-        self.verticalEdge[row][col].setMinimumSize(QSize(self.EDGE_SIZE, self.CELL_SIZE))
-        self.verticalEdge[row][col].setMaximumSize(QSize(self.EDGE_SIZE, self.CELL_SIZE))
-        self.verticalEdge[row][col].pressed.connect(lambda r=row, c=col: self.__verticalEdgeCallback(r, c))
-        self.verticalEdge[row][col].setStyleSheet("QPushButton {background-color: #FFFFFF}")
+        self.verticalEdge[row].append(QPushButton("v"))
+        callbackFunc = lambda b=self.verticalEdge, s=self.verticalEdgeStatus, r=row, c=col: self.__butCallback(b, s, r, c)
+        butMinSizeX = self.EDGE_SIZE
+        butMinSizeY = self.CELL_SIZE
+        butMaxSizeX = self.EDGE_SIZE
+        butMaxSizeY = self.CELL_SIZE
+        self.verticalEdge[row][col].pressed.connect(callbackFunc)
+        self.verticalEdge[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
+        self.verticalEdge[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
+        self.verticalEdge[row][col].setEnabled(True)
+
 
     def __addHorizontalEdge(self, row, col):
-        self.horizontalEdge[row].append( QPushButton("h") )
-        self.horizontalEdge[row][col].setMinimumSize(QSize(self.CELL_SIZE, self.EDGE_SIZE))
-        self.horizontalEdge[row][col].setMaximumSize(QSize(self.CELL_SIZE, self.EDGE_SIZE))
-        self.horizontalEdge[row][col].pressed.connect( lambda r=row, c=col: self.__horizontalEdgeCallback(r, c))
-        self.horizontalEdge[row][col].setStyleSheet("QPushButton {background-color: #FFFFFF}")
+        self.horizontalEdge[row].append(QPushButton("v"))
+        callbackFunc = lambda b=self.horizontalEdge, s=self.horizontalEdgeStatus, r=row, c=col: self.__butCallback(b, s, r, c)
+        butMinSizeX = self.CELL_SIZE
+        butMinSizeY = self.EDGE_SIZE
+        butMaxSizeX = self.CELL_SIZE
+        butMaxSizeY = self.EDGE_SIZE
+        self.horizontalEdge[row][col].pressed.connect(callbackFunc)
+        self.horizontalEdge[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
+        self.horizontalEdge[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
 
-    def __cellCallback(self, row, col):
-        self.cells[row][col].setStyleSheet("QPushButton {background-color: #F00000}")
-        print(str(col) + "/" + str(row))
 
-    def __verticalEdgeCallback(self, row, col):
-        self.verticalEdge[row][col].setStyleSheet("QPushButton {background-color: #00F000}")
-        print(str(col) + "/" + str(row))
+    def __butCallback(self, but, status, row=0, col=0):
+        print(str(row) + " " + str(col))
+        whiteCode = "FFFFFF"
+        redCode = "FF0000"
+        status[row][col] = not status[row][col]
+        if status[row][col] == True:
+            self.__setButtonCollor(but[row][col], redCode)
+            print("set")
+        else:
+            self.__setButtonCollor(but[row][col], whiteCode)
+            print("reset")
 
-    def __horizontalEdgeCallback(self, row, col):
-        self.horizontalEdge[row][col].setStyleSheet("QPushButton {background-color: #0000F0}")
-        print(str(col) + "/" + str(row))
 
     def __ChooseStartPosCallback(self):
+        self.__setMode("ChooseStartPos")
         print("__ChooseStartPosCallback")
 
+
     def __ChooseEndPosCallback(self):
+        self.__setMode("ChooseEndPose")
         print("__ChooseEndPosCallback")
 
+
     def __ChooseBordersCallback(self):
+        self.__setMode("ChooseBorders")
         print("__ChooseBordersCallback")
+
 
     def __GenerateJsonCallback(self):
         print("__GenerateJsonCallback")
 
+
     def __CreateBordersAroundMapCallback(self):
         print("__CreateBordersAroundMapCallback")
+
+
+    def __setMode(self, mode):
+        whiteCode = "FFFFFF"
+        redCode = "FF0000"
+        if mode == "ChooseStartPos":
+            self.MODE = mode
+            self.__setButtonCollor(self.ChooseStartPosButton, redCode)
+        else:
+            self.__setButtonCollor(self.ChooseStartPosButton, whiteCode)
+        if mode == "ChooseEndPose":
+            self.MODE = mode
+            self.__setButtonCollor(self.ChooseEndPosButton, redCode)
+        else:
+            self.__setButtonCollor(self.ChooseEndPosButton, whiteCode)
+        if mode == "ChooseBorders":
+            self.MODE = mode
+            self.__setButtonCollor(self.ChooseBordersButton, redCode)
+        else:
+            self.__setButtonCollor(self.ChooseBordersButton, whiteCode)
+    
+
+    def __setButtonCollor(self, but, collor="FFFFFF"):
+        but.setStyleSheet("QPushButton {background-color: #" + collor + "}")
+
+
+    def __createButton(self, butName, callbackFunc):
+        but = QPushButton(butName)
+        but.pressed.connect(callbackFunc)
+        return but
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
