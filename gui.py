@@ -25,14 +25,13 @@ class MainWindow(QMainWindow):
         self.setGeometry(window_pose_x, window_pose_y, window_size_x, window_size_y)
         self.setCentralWidget(widget)
 
-
     def __addTableWithButtonsToLayout(self, layout):
         self.cells = list()
         self.horizontalEdge = list()
         self.verticalEdge = list()
-        self.cellsStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X + 1)]
-        self.horizontalEdgeStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X + 1)]
-        self.verticalEdgeStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X + 1)]
+        self.cellsStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X)]
+        self.horizontalEdgeStatus = [[False] * (self.CELLS_AMOUNT_X) for i in range(self.CELLS_AMOUNT_Y + 1)]
+        self.verticalEdgeStatus = [[False] * (self.CELLS_AMOUNT_X + 1) for i in range(self.CELLS_AMOUNT_Y)]
         for row in range(self.SIZE_Y,  -1, -1):
             if (row % 2) == 0:
                 heRow = int((self.SIZE_Y - row)/2)  # from 0 to 9
@@ -172,6 +171,7 @@ class MainWindow(QMainWindow):
             self.__setButtonCollor(but[row][col], greenCode)
             self.end_x = row
             self.end_y = col
+    
 
     def __ChooseStartPosCallback(self):
         self.__setMode(self.MODE_CHOOSE_START_POS)
@@ -202,16 +202,19 @@ class MainWindow(QMainWindow):
         if mode == self.MODE_CHOOSE_START_POS:
             self.MODE = mode
             self.__setButtonCollor(self.ChooseStartPosButton, redCode)
+            self.__disableBordersButtons()
         else:
             self.__setButtonCollor(self.ChooseStartPosButton, whiteCode)
         if mode == self.MODE_CHOOSE_END_POS:
             self.MODE = mode
             self.__setButtonCollor(self.ChooseEndPosButton, redCode)
+            self.__disableBordersButtons()
         else:
             self.__setButtonCollor(self.ChooseEndPosButton, whiteCode)
         if mode == self.MODE_CHOOSE_BORDERS:
             self.MODE = mode
             self.__setButtonCollor(self.ChooseBordersButton, redCode)
+            self.__enableBordersButtons()
         else:
             self.__setButtonCollor(self.ChooseBordersButton, whiteCode)
     
@@ -224,6 +227,24 @@ class MainWindow(QMainWindow):
         but = QPushButton(butName)
         but.pressed.connect(callbackFunc)
         return but
+
+
+    def __disableBordersButtons(self):
+        for r in range(0, self.CELLS_AMOUNT_Y + 1):
+            for c in range(0, self.CELLS_AMOUNT_X):
+                self.horizontalEdge[r][c].setEnabled(False)
+        for r in range(0, self.CELLS_AMOUNT_Y):
+            for c in range(0, self.CELLS_AMOUNT_X + 1):
+                self.verticalEdge[r][c].setEnabled(False)
+
+
+    def __enableBordersButtons(self):
+        for r in range(0, self.CELLS_AMOUNT_Y + 1):
+            for c in range(0, self.CELLS_AMOUNT_X):
+                self.horizontalEdge[r][c].setEnabled(True)
+        for r in range(0, self.CELLS_AMOUNT_Y):
+            for c in range(0, self.CELLS_AMOUNT_X + 1):
+                self.verticalEdge[r][c].setEnabled(True)
 
 
 if __name__ == '__main__':
