@@ -22,6 +22,6 @@ def createWorldFromJson(jsonFileName="data_file.json", sdfFileName="world.world"
     sdfCreator.writeWorldToFile(sdfFileName)
 
 if __name__=="__main__":
-    testJsonCreation()
+    #testJsonCreation()
     createWorldFromJson()
 
