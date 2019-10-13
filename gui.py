@@ -1,9 +1,9 @@
-#!/usr/bin/env python2
-import json
+#!/usr/bin/env python3
 import sys
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from json_converter import *
 
 # Some constants
 WHITE_CODE = "FFFFFF"
@@ -23,6 +23,7 @@ MODE_CHOOSE_END_POS = "ChooseEndPos"
 MODE_CHOOSE_BORDERS = "ChooseBorders"
 
 JSON_FILE_NAME = "data_file.json"
+
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -94,6 +95,10 @@ class MainWindow(QMainWindow):
         self.GenerateJsonButton.pressed.connect(self.__GenerateJsonCallback)
         layout.addWidget(self.GenerateJsonButton, 5, self.SIZE_X + 1)
 
+        self.GenerateSdfButton = QPushButton("Create sdf world from json")
+        self.GenerateSdfButton.pressed.connect(self.__GenerateSdfCallback)
+        layout.addWidget(self.GenerateSdfButton, 6, self.SIZE_X + 1)
+
         layout.addWidget(QLabel("Additional features:"), 14, self.SIZE_X + 1)
 
         self.CreateBordersAroundMapButton = QPushButton("Create borders around map")
@@ -138,7 +143,7 @@ class MainWindow(QMainWindow):
 
 
     def __addHorizontalEdge(self, row, col):
-        self.horizontalEdge[row].append(QPushButton("v"))
+        self.horizontalEdge[row].append(QPushButton("h"))
         callbackFunc = lambda b=self.horizontalEdge, s=self.horizontalEdgeStatus, r=row, c=col: self.__butCallback(b, s, r, c)
         butMinSizeX = CELL_SIZE
         butMinSizeY = EDGE_SIZE
@@ -197,32 +202,12 @@ class MainWindow(QMainWindow):
 
 
     def __GenerateJsonCallback(self):
-        write_file = open(JSON_FILE_NAME, "w")
-        cells = list()
-        vEdge = list()
-        hEdge = list()
-        for r in range(0, len(self.cells)):
-            for c in range(0, len(self.cells[0])):
-                if self.cellsStatus[r][c] == True:
-                    cells.append([c, r])
-        for r in range(0, len(self.verticalEdge)):
-            for c in range(0, len(self.verticalEdge[0])):
-                if self.verticalEdgeStatus[r][c] == True:
-                    vEdge.append([c, r])
-        for r in range(0, len(self.horizontalEdge)):
-            for c in range(0, len(self.horizontalEdge[0])):
-                if self.horizontalEdgeStatus[r][c] == True:
-                    hEdge.append([c, r])
+        create_json_from_gui(self.start_x, self.start_y, self.SIZE_X, self.SIZE_Y, self.cellsStatus, self.verticalEdgeStatus, self.horizontalEdgeStatus)
+        print("__GenerateJsonCallback")
 
-        data = dict([("start_x", self.start_x),
-                     ("start_y", self.start_y),
-                     ("size_x", self.SIZE_X),
-                     ("size_y", self.SIZE_Y),
-                     ("cells", cells),
-                     ("horizontal_edge", hEdge),
-                     ("vertical_edge", vEdge)])
-        print(data)
-        json.dump(data, write_file, indent=2)
+
+    def __GenerateSdfCallback(self):
+        create_sdf_from_json()
         print("__GenerateJsonCallback")
 
 
@@ -280,9 +265,3 @@ class MainWindow(QMainWindow):
             for c in range(0, len(self.verticalEdge[0])):
                 self.verticalEdge[r][c].setEnabled(True)
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    app.exec_()

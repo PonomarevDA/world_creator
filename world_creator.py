@@ -1,27 +1,23 @@
 #!/usr/bin/env python3
 
 """
-This script create gazebo sdf world with predefined configuration.
+This create gui that allow to create json and sdf files.
 """
 
-from gazebo_sdf import *
-import json
 from tests import *
+from gui import *
 
-def createWorldFromJson(jsonFileName="data_file.json", sdfFileName="world.world"):
-    read_file = open(jsonFileName, "r")
-    data = json.load(read_file)
-
-    sdfCreator = SdfCreator(data.get("start_x"), data.get("start_y"), data.get("size_x"), data.get("size_y"))
-    for cells in data.get("cells"):
-        sdfCreator.addBigObstacle(cells[0], cells[1])
-    for edges in data.get("horizontal_edge"):
-        sdfCreator.addHorizontalBorder(edges[0], edges[1])
-    for edges in data.get("vertical_edge"):
-        sdfCreator.addVerticalBorder(edges[0], edges[1])
-    sdfCreator.writeWorldToFile(sdfFileName)
+MODE_CREATE_WORLD_FROM_GUI = "CreateWorldFromGui"
+MODE_CREATE_WORLD_FROM_TEST_JSON = "CreateWorldFromTestJson"
+mode = MODE_CREATE_WORLD_FROM_GUI
 
 if __name__=="__main__":
-    #testJsonCreation()
-    createWorldFromJson()
+    if mode == MODE_CREATE_WORLD_FROM_GUI:
+        app = QApplication(sys.argv)
+        window = MainWindow()
+        window.show()
+        app.exec_()
+    elif mode == MODE_CREATE_WORLD_FROM_TEST_JSON:
+        testJsonCreation()
+        createWorldFromJson()
 
