@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 from lxml import etree
 import copy
 import numpy
@@ -69,12 +69,12 @@ class SdfCreator:
     def addBigObstacle(self, cell_x, cell_y):
         """ 
         @brief Spawn big obstacle with size 2x2 on middle of cell
-        @param cell_x - x number of cell (from 1 to max)
-        @param cell_y - y index of cell (from 1 to max)
+        @param cell_x - x number of cell (from 0 to CELLS_X_AMOUNT - 1)
+        @param cell_y - y index of cell (from 0 to CELLS_Y_AMOUNT - 1)
         """
         obstacleSize = Point(self.CELL_SIZE_X, self.CELL_SIZE_Y, self.SIZE_Z)
-        pose_x = cell_x * obstacleSize.x - obstacleSize.x / 2
-        pose_y = cell_y * obstacleSize.y - obstacleSize.y / 2
+        pose_x = cell_x * obstacleSize.x + obstacleSize.x / 2
+        pose_y = cell_y * obstacleSize.y + obstacleSize.y / 2
         self.__spawnBox(Point(pose_x, pose_y, self.SIZE_Z), obstacleSize)
 
 
@@ -116,10 +116,12 @@ class SdfCreator:
         MAX_MAP_SIZE = 40
         DEFAULT_MAP_SIZE = 18
         DEFAULT_POSE = 17
+        start_x = start_x * 2 + 1
+        start_y = start_y * 2 + 1
         self.SIZE_X = size_x if ((size_x >= MIN_MAP_SIZE) and (size_x <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
         self.SIZE_Y = size_y if ((size_y >= MIN_MAP_SIZE) and (size_y <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
-        self.START_X = start_x if ((start_x >= 0) and (start_x <= self.SIZE_X)) else DEFAULT_POSE
-        self.START_Y = start_y if ((start_y >= 0) and (start_y <= self.SIZE_Y)) else DEFAULT_POSE
+        self.START_X = (start_x if ((start_x >= 0) and (start_x <= self.SIZE_X)) else DEFAULT_POSE)
+        self.START_Y = (start_y if ((start_y >= 0) and (start_y <= self.SIZE_Y)) else DEFAULT_POSE)
         self.SIZE_Z = float(0.5)
         print("World settings are: ", self.SIZE_X, self.SIZE_Y, self.SIZE_Z, self.START_X, self.START_Y)
 

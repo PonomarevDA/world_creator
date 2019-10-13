@@ -204,15 +204,15 @@ class MainWindow(QMainWindow):
         for r in range(0, len(self.cells)):
             for c in range(0, len(self.cells[0])):
                 if self.cellsStatus[r][c] == True:
-                    cells.append([r, c])
+                    cells.append([c, r])
         for r in range(0, len(self.verticalEdge)):
             for c in range(0, len(self.verticalEdge[0])):
                 if self.verticalEdgeStatus[r][c] == True:
-                    vEdge.append([r, c])
+                    vEdge.append([c, r])
         for r in range(0, len(self.horizontalEdge)):
             for c in range(0, len(self.horizontalEdge[0])):
                 if self.horizontalEdgeStatus[r][c] == True:
-                    hEdge.append([r, c])
+                    hEdge.append([c, r])
 
         data = dict([("start_x", self.start_x),
                      ("start_y", self.start_y),
