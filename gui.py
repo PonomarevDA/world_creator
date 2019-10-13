@@ -89,20 +89,38 @@ class MainWindow(QMainWindow):
         self.ChooseBordersButton.pressed.connect(self.__ChooseBordersCallback)
         layout.addWidget(self.ChooseBordersButton, 3, self.SIZE_X + 1)
 
-        layout.addWidget(QLabel("Then press below button:"), 4, self.SIZE_X + 1)
+        self.ChooseSignsButton = QPushButton("4. Choose signs")
+        self.ChooseSignsButton.pressed.connect(self.__ChooseSignsCallback)
+        self.ChooseSignsButton.setEnabled(False)
+        layout.addWidget(self.ChooseSignsButton, 4, self.SIZE_X + 1)
+
+        self.ChooseLightsButton = QPushButton("5. Choose lighs")
+        self.ChooseLightsButton.pressed.connect(self.__ChooseLightsCallback)
+        self.ChooseLightsButton.setEnabled(False)
+        layout.addWidget(self.ChooseLightsButton, 5, self.SIZE_X + 1)
+
+        layout.addWidget(QLabel("Or use this features:"), 6, self.SIZE_X + 1)
+
+        self.LoadJsonButton = QPushButton("Load json")
+        self.LoadJsonButton.pressed.connect(self.__LoadJsonCallback)
+        layout.addWidget(self.LoadJsonButton, 7, self.SIZE_X + 1)
+        self.LoadJsonButton.setEnabled(False)
+
+        layout.addWidget(QLabel("Then press below button:"), 8, self.SIZE_X + 1)
 
         self.GenerateJsonButton = QPushButton("Generate json")
         self.GenerateJsonButton.pressed.connect(self.__GenerateJsonCallback)
-        layout.addWidget(self.GenerateJsonButton, 5, self.SIZE_X + 1)
+        layout.addWidget(self.GenerateJsonButton, 9, self.SIZE_X + 1)
 
         self.GenerateSdfButton = QPushButton("Create sdf world from json")
         self.GenerateSdfButton.pressed.connect(self.__GenerateSdfCallback)
-        layout.addWidget(self.GenerateSdfButton, 6, self.SIZE_X + 1)
+        layout.addWidget(self.GenerateSdfButton, 10, self.SIZE_X + 1)
 
         layout.addWidget(QLabel("Additional features:"), 14, self.SIZE_X + 1)
 
         self.CreateBordersAroundMapButton = QPushButton("Create borders around map")
         self.CreateBordersAroundMapButton.pressed.connect(self.__CreateBordersAroundMapCallback)
+        self.CreateBordersAroundMapButton.setEnabled(False)
         layout.addWidget(self.CreateBordersAroundMapButton, 15, self.SIZE_X + 1)
 
         layout.addWidget(QLabel("Error window:"), 16, self.SIZE_X + 1)
@@ -199,6 +217,18 @@ class MainWindow(QMainWindow):
     def __ChooseBordersCallback(self):
         self.__setMode(MODE_CHOOSE_BORDERS)
         print("__ChooseBordersCallback")
+
+
+    def __ChooseSignsCallback(self):
+        print("__ChooseSignsCallback")
+
+
+    def __ChooseLightsCallback(self):
+        print("__ChooseLightsCallback")
+
+
+    def __LoadJsonCallback(self):
+        print("__LoadJsonCallback")
 
 
     def __GenerateJsonCallback(self):
