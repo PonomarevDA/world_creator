@@ -11,6 +11,15 @@ class Point:
     def getString(self):
         return str(self.x) + " " + str(self.y) + " " + str(self.z) + " 0 0 0"
 
+#Constants
+BORDER_WIDTH = float(0.1)
+MAX_BORDER_LEN = float(2)
+CELL_SIZE_X = int(2)
+CELL_SIZE_Y = int(2)
+SIZE_Z = float(0.5)
+HORIZONTAL_BORDER_SIZE = Point(MAX_BORDER_LEN, BORDER_WIDTH, SIZE_Z)
+VERTICAL_BORDER_SIZE = Point(BORDER_WIDTH, MAX_BORDER_LEN, SIZE_Z)
+
 
 class SdfCreator:
     def __init__(self, start_x, start_y, size_x, size_y):
@@ -19,14 +28,8 @@ class SdfCreator:
         """
         self.__setConfig(start_x, start_y, size_x, size_y)
         self.__create_empty_world()
-        self.BORDER_WIDTH = float(0.1)
-        self.MAX_BORDER_LEN = float(2)
-        self.CELL_SIZE_X = int(2)
-        self.CELL_SIZE_Y = int(2)
-        self.HORIZONTAL_BORDER_SIZE = Point(self.MAX_BORDER_LEN, self.BORDER_WIDTH, self.SIZE_Z)
-        self.VERTICAL_BORDER_SIZE = Point(self.BORDER_WIDTH, self.MAX_BORDER_LEN, self.SIZE_Z)
-        self.CELLS_X_AMOUNT = int(self.SIZE_X / self.CELL_SIZE_X)
-        self.CELLS_Y_AMOUNT = int(self.SIZE_Y / self.CELL_SIZE_Y)
+        self.CELLS_X_AMOUNT = int(self.SIZE_X / CELL_SIZE_X)
+        self.CELLS_Y_AMOUNT = int(self.SIZE_Y / CELL_SIZE_Y)
 
 
     def showTree(self):
@@ -50,9 +53,9 @@ class SdfCreator:
         @param edge_x - from 0 to CELLS_X_AMOUNT 
         @param edge_y - from 0 to CELLS_Y_AMOUNT + 1
         """
-        pos_x = edge_x * self.CELL_SIZE_X
-        pos_y = edge_y * self.CELL_SIZE_Y + self.CELL_SIZE_Y/2
-        self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), self.VERTICAL_BORDER_SIZE)
+        pos_x = edge_x * CELL_SIZE_X
+        pos_y = edge_y * CELL_SIZE_Y + CELL_SIZE_Y/2
+        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), VERTICAL_BORDER_SIZE)
 
 
     def addHorizontalBorder(self, edge_x, edge_y):
@@ -61,9 +64,9 @@ class SdfCreator:
         @param edge_x - from 0 to CELLS_X_AMOUNT + 1
         @param edge_y - from 0 to CELLS_Y_AMOUNT 
         """
-        pos_x = edge_x * self.CELL_SIZE_X + self.CELL_SIZE_X/2
-        pos_y = edge_y * self.CELL_SIZE_Y
-        self.__spawnBox(Point(pos_x, pos_y, self.SIZE_Z), self.HORIZONTAL_BORDER_SIZE)
+        pos_x = edge_x * CELL_SIZE_X + CELL_SIZE_X/2
+        pos_y = edge_y * CELL_SIZE_Y
+        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), HORIZONTAL_BORDER_SIZE)
 
 
     def addBigObstacle(self, cell_x, cell_y):
@@ -72,10 +75,10 @@ class SdfCreator:
         @param cell_x - x number of cell (from 0 to CELLS_X_AMOUNT - 1)
         @param cell_y - y index of cell (from 0 to CELLS_Y_AMOUNT - 1)
         """
-        obstacleSize = Point(self.CELL_SIZE_X, self.CELL_SIZE_Y, self.SIZE_Z)
+        obstacleSize = Point(CELL_SIZE_X, CELL_SIZE_Y, SIZE_Z)
         pose_x = cell_x * obstacleSize.x + obstacleSize.x / 2
         pose_y = cell_y * obstacleSize.y + obstacleSize.y / 2
-        self.__spawnBox(Point(pose_x, pose_y, self.SIZE_Z), obstacleSize)
+        self.__spawnBox(Point(pose_x, pose_y, SIZE_Z), obstacleSize)
 
 
     def __spawnBox(self, box_position, box_size):
@@ -122,8 +125,8 @@ class SdfCreator:
         self.SIZE_Y = size_y if ((size_y >= MIN_MAP_SIZE) and (size_y <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
         self.START_X = (start_x if ((start_x >= 0) and (start_x <= self.SIZE_X)) else DEFAULT_POSE)
         self.START_Y = (start_y if ((start_y >= 0) and (start_y <= self.SIZE_Y)) else DEFAULT_POSE)
-        self.SIZE_Z = float(0.5)
-        print("World settings are: ", self.SIZE_X, self.SIZE_Y, self.SIZE_Z, self.START_X, self.START_Y)
+        SIZE_Z = float(0.5)
+        print("World settings are: ", self.SIZE_X, self.SIZE_Y, SIZE_Z, self.START_X, self.START_Y)
 
 
     def __create_empty_world(self):
