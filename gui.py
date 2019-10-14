@@ -17,7 +17,7 @@ WINDOW_SIZE_X = 400
 WINDOW_SIZE_Y = 400
 
 CELL_SIZE = 30
-EDGE_SIZE = 10
+WALL_SIZE = 10
 MODE_CHOOSE_START_POS = "ChooseStartPos"
 MODE_CHOOSE_END_POS = "ChooseEndPos"
 MODE_CHOOSE_BORDERS = "ChooseBorders"
@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.__initParams()
         layout = QGridLayout()
         self.__addTableWithButtonsToLayout(layout)
-        self.__addOtherButtons(layout)
+        self.__addSettingsButtons(layout)
         self.__setMode(MODE_CHOOSE_START_POS)
 
         widget = QWidget()
@@ -44,37 +44,37 @@ class MainWindow(QMainWindow):
 
     def __addTableWithButtonsToLayout(self, layout):
         self.cells = list()
-        self.horizontalEdge = list()
-        self.verticalEdge = list()
+        self.horizontalWall = list()
+        self.verticalWall = list()
         self.cellsStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X)]
-        self.horizontalEdgeStatus = [[False] * (self.CELLS_AMOUNT_X) for i in range(self.CELLS_AMOUNT_Y + 1)]
-        self.verticalEdgeStatus = [[False] * (self.CELLS_AMOUNT_X + 1) for i in range(self.CELLS_AMOUNT_Y)]
+        self.horizontalWallStatus = [[False] * (self.CELLS_AMOUNT_X) for i in range(self.CELLS_AMOUNT_Y + 1)]
+        self.verticalWallStatus = [[False] * (self.CELLS_AMOUNT_X + 1) for i in range(self.CELLS_AMOUNT_Y)]
 
         for row in range(self.SIZE_Y, -1, -1):
             if (row % 2) == 0:
                 heRow = int((self.SIZE_Y - row)/2)  # from 0 to 9
-                self.horizontalEdge.append(list())
+                self.horizontalWall.append(list())
                 for col in range(0, self.SIZE_X, 2):
                     heCol = int(col/2) # from 0 to 8
-                    self.__addHorizontalEdge(heRow, heCol)
-                    layout.addWidget(self.horizontalEdge[heRow][heCol], row, col + 1, 1, 1)
+                    self.__addHorizontalWall(heRow, heCol)
+                    layout.addWidget(self.horizontalWall[heRow][heCol], row, col + 1, 1, 1)
             else:
                 veRow = int((self.SIZE_Y - row)/2) # from 0 to 8
                 cellRow = int((self.SIZE_Y - row)/2) # from 0 to 8
-                self.verticalEdge.append(list())
+                self.verticalWall.append(list())
                 self.cells.append(list())
                 for col in range(0, self.SIZE_Y, 2):
                     veCol = int(col/2) # from 0 to 9
                     cellCol = int(col/2) # from 0 to 8
-                    self.__addVerticalEdge(veRow, veCol)
+                    self.__addVerticalWall(veRow, veCol)
                     self.__addCell(cellRow, cellCol)
-                    layout.addWidget(self.verticalEdge[veRow][veCol], row, col, 1, 1)
+                    layout.addWidget(self.verticalWall[veRow][veCol], row, col, 1, 1)
                     layout.addWidget(self.cells[cellRow][cellCol], row, col + 1, 1, 1)
-                self.__addVerticalEdge(veRow, veCol + 1)
-                layout.addWidget(self.verticalEdge[veRow][veCol + 1], row, col + 2, 1, 1)
+                self.__addVerticalWall(veRow, veCol + 1)
+                layout.addWidget(self.verticalWall[veRow][veCol + 1], row, col + 2, 1, 1)
 
 
-    def __addOtherButtons(self, layout):
+    def __addSettingsButtons(self, layout):
         layout.addWidget(QLabel("To create world: "), 0, self.SIZE_X + 1)
 
         self.ChooseStartPosButton = QPushButton("1. Choose start pos")
@@ -147,29 +147,29 @@ class MainWindow(QMainWindow):
         self.cells[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
 
 
-    def __addVerticalEdge(self, row, col):
-        self.verticalEdge[row].append(QPushButton("v"))
-        callbackFunc = lambda b=self.verticalEdge, s=self.verticalEdgeStatus, r=row, c=col: self.__butCallback(b, s, r, c)
-        butMinSizeX = EDGE_SIZE
+    def __addVerticalWall(self, row, col):
+        self.verticalWall[row].append(QPushButton("v"))
+        callbackFunc = lambda b=self.verticalWall, s=self.verticalWallStatus, r=row, c=col: self.__butCallback(b, s, r, c)
+        butMinSizeX = WALL_SIZE
         butMinSizeY = CELL_SIZE
-        butMaxSizeX = EDGE_SIZE
+        butMaxSizeX = WALL_SIZE
         butMaxSizeY = CELL_SIZE
-        self.verticalEdge[row][col].pressed.connect(callbackFunc)
-        self.verticalEdge[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
-        self.verticalEdge[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
-        self.verticalEdge[row][col].setEnabled(True)
+        self.verticalWall[row][col].pressed.connect(callbackFunc)
+        self.verticalWall[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
+        self.verticalWall[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
+        self.verticalWall[row][col].setEnabled(True)
 
 
-    def __addHorizontalEdge(self, row, col):
-        self.horizontalEdge[row].append(QPushButton("h"))
-        callbackFunc = lambda b=self.horizontalEdge, s=self.horizontalEdgeStatus, r=row, c=col: self.__butCallback(b, s, r, c)
+    def __addHorizontalWall(self, row, col):
+        self.horizontalWall[row].append(QPushButton("h"))
+        callbackFunc = lambda b=self.horizontalWall, s=self.horizontalWallStatus, r=row, c=col: self.__butCallback(b, s, r, c)
         butMinSizeX = CELL_SIZE
-        butMinSizeY = EDGE_SIZE
+        butMinSizeY = WALL_SIZE
         butMaxSizeX = CELL_SIZE
-        butMaxSizeY = EDGE_SIZE
-        self.horizontalEdge[row][col].pressed.connect(callbackFunc)
-        self.horizontalEdge[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
-        self.horizontalEdge[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
+        butMaxSizeY = WALL_SIZE
+        self.horizontalWall[row][col].pressed.connect(callbackFunc)
+        self.horizontalWall[row][col].setMinimumSize(QSize(butMinSizeX, butMinSizeY))
+        self.horizontalWall[row][col].setMaximumSize(QSize(butMaxSizeX, butMaxSizeY))
 
 
     def __butCallback(self, but, status, row, col):
@@ -232,7 +232,7 @@ class MainWindow(QMainWindow):
 
 
     def __GenerateJsonCallback(self):
-        create_json_from_gui(self.start_x, self.start_y, self.SIZE_X, self.SIZE_Y, self.cellsStatus, self.verticalEdgeStatus, self.horizontalEdgeStatus)
+        create_json_from_gui(self.start_x, self.start_y, self.SIZE_X, self.SIZE_Y, self.cellsStatus, self.verticalWallStatus, self.horizontalWallStatus)
         print("__GenerateJsonCallback")
 
 
@@ -279,19 +279,19 @@ class MainWindow(QMainWindow):
 
 
     def __disableBordersButtons(self):
-        for r in range(0, len(self.horizontalEdge)):
-            for c in range(0, len(self.horizontalEdge[0])):
-                self.horizontalEdge[r][c].setEnabled(False)
-        for r in range(0, len(self.verticalEdge)):
-            for c in range(0, len(self.verticalEdge[0])):
-                self.verticalEdge[r][c].setEnabled(False)
+        for r in range(0, len(self.horizontalWall)):
+            for c in range(0, len(self.horizontalWall[0])):
+                self.horizontalWall[r][c].setEnabled(False)
+        for r in range(0, len(self.verticalWall)):
+            for c in range(0, len(self.verticalWall[0])):
+                self.verticalWall[r][c].setEnabled(False)
 
 
     def __enableBordersButtons(self):
-        for r in range(0, len(self.horizontalEdge)):
-            for c in range(0, len(self.horizontalEdge[0])):
-                self.horizontalEdge[r][c].setEnabled(True)
-        for r in range(0, len(self.verticalEdge)):
-            for c in range(0, len(self.verticalEdge[0])):
-                self.verticalEdge[r][c].setEnabled(True)
+        for r in range(0, len(self.horizontalWall)):
+            for c in range(0, len(self.horizontalWall[0])):
+                self.horizontalWall[r][c].setEnabled(True)
+        for r in range(0, len(self.verticalWall)):
+            for c in range(0, len(self.verticalWall[0])):
+                self.verticalWall[r][c].setEnabled(True)
 

@@ -66,10 +66,10 @@ def create_sdf_from_json(jsonFileName=JSON_DEFAULT_NAME, sdfFileName=SDF_DEFAULT
     for obj in data.get(OBJECTS_NAME):
         position = obj.get(OBJECTS_POSITION_FIELD_NAME)
         if obj.get(OBJECTS_NAME_FIELD_NAME) == BOX_NAME:
-            sdfCreator.addBigObstacle(position[0], position[1])
+            sdfCreator.addBox(position[0], position[1])
         if obj.get(OBJECTS_NAME_FIELD_NAME) == HORIZONTAL_WALL_NAME:
-            sdfCreator.addHorizontalBorder(position[0], position[1])
+            sdfCreator.addHorizontalWall(position[0], position[1])
         if obj.get(OBJECTS_NAME_FIELD_NAME) == VERTICAL_WALL_NAME:
-            sdfCreator.addVerticalBorder(position[0], position[1])
+            sdfCreator.addVerticalWall(position[0], position[1])
     sdfCreator.writeWorldToFile(sdfFileName)
 

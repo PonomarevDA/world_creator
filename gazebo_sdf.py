@@ -12,13 +12,13 @@ class Point:
         return str(self.x) + " " + str(self.y) + " " + str(self.z) + " 0 0 0"
 
 #Constants
-BORDER_WIDTH = float(0.1)
-MAX_BORDER_LEN = float(2)
+WALL_WIDTH = float(0.1)
+MAX_WALL_LEN = float(2)
 CELL_SIZE_X = int(2)
 CELL_SIZE_Y = int(2)
 SIZE_Z = float(0.5)
-HORIZONTAL_BORDER_SIZE = Point(MAX_BORDER_LEN, BORDER_WIDTH, SIZE_Z)
-VERTICAL_BORDER_SIZE = Point(BORDER_WIDTH, MAX_BORDER_LEN, SIZE_Z)
+HORIZONTAL_WALL_SIZE = Point(MAX_WALL_LEN, WALL_WIDTH, SIZE_Z)
+VERTICAL_WALL_SIZE = Point(WALL_WIDTH, MAX_WALL_LEN, SIZE_Z)
 
 
 class SdfCreator:
@@ -47,46 +47,46 @@ class SdfCreator:
         f.write(etree.tostring(self.SDF_ROOT, pretty_print=True))
 
 
-    def addVerticalBorder(self, edge_x, edge_y):
+    def addVerticalWall(self, wall_x, wall_y):
         """ 
-        @brief Spawn vertical border on edge of cell
-        @param edge_x - from 0 to CELLS_X_AMOUNT 
-        @param edge_y - from 0 to CELLS_Y_AMOUNT + 1
+        @brief Spawn vertical wall on wall of cell
+        @param wall_x - from 0 to CELLS_X_AMOUNT 
+        @param wall_y - from 0 to CELLS_Y_AMOUNT + 1
         """
-        pos_x = edge_x * CELL_SIZE_X
-        pos_y = edge_y * CELL_SIZE_Y + CELL_SIZE_Y/2
-        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), VERTICAL_BORDER_SIZE)
+        pos_x = wall_x * CELL_SIZE_X
+        pos_y = wall_y * CELL_SIZE_Y + CELL_SIZE_Y/2
+        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), VERTICAL_WALL_SIZE)
 
 
-    def addHorizontalBorder(self, edge_x, edge_y):
+    def addHorizontalWall(self, wall_x, wall_y):
         """ 
-        @brief Spawn horisontal border on edge of cell
-        @param edge_x - from 0 to CELLS_X_AMOUNT + 1
-        @param edge_y - from 0 to CELLS_Y_AMOUNT 
+        @brief Spawn horisontal wall on wall of cell
+        @param wall_x - from 0 to CELLS_X_AMOUNT + 1
+        @param wall_y - from 0 to CELLS_Y_AMOUNT 
         """
-        pos_x = edge_x * CELL_SIZE_X + CELL_SIZE_X/2
-        pos_y = edge_y * CELL_SIZE_Y
-        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), HORIZONTAL_BORDER_SIZE)
+        pos_x = wall_x * CELL_SIZE_X + CELL_SIZE_X/2
+        pos_y = wall_y * CELL_SIZE_Y
+        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), HORIZONTAL_WALL_SIZE)
 
 
-    def addBigObstacle(self, cell_x, cell_y):
+    def addBox(self, cell_x, cell_y):
         """ 
-        @brief Spawn big obstacle with size 2x2 on middle of cell
+        @brief Spawn big box with size 2x2 on middle of cell
         @param cell_x - x number of cell (from 0 to CELLS_X_AMOUNT - 1)
         @param cell_y - y index of cell (from 0 to CELLS_Y_AMOUNT - 1)
         """
-        obstacleSize = Point(CELL_SIZE_X, CELL_SIZE_Y, SIZE_Z)
-        pose_x = cell_x * obstacleSize.x + obstacleSize.x / 2
-        pose_y = cell_y * obstacleSize.y + obstacleSize.y / 2
-        self.__spawnBox(Point(pose_x, pose_y, SIZE_Z), obstacleSize)
+        boxSize = Point(CELL_SIZE_X, CELL_SIZE_Y, SIZE_Z)
+        pose_x = cell_x * boxSize.x + boxSize.x / 2
+        pose_y = cell_y * boxSize.y + boxSize.y / 2
+        self.__spawnBox(Point(pose_x, pose_y, SIZE_Z), boxSize)
 
 
     def __spawnBox(self, box_position, box_size):
         """ 
         @brief Spawn box with defined size in defined position
         @note You can spawn it in 2 variants:
-        1. obstacle: on center of cell in template [odd; odd], for example [3; 1], [3; 3], [3; 5]
-        2. border: on center of cell in template [even; odd] or [odd; even], for example [1; 0], [2; 1], [4; 3]
+        1. box: on center of cell in template [odd; odd], for example [3; 1], [3; 3], [3; 5]
+        2. wall: on center of cell in template [even; odd] or [odd; even], for example [1; 0], [2; 1], [4; 3]
         @param box_position - position in high level abstraction, in other words, start offset was taken into account.
         """
         self.box_counter += 1
