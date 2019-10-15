@@ -53,6 +53,7 @@ class SdfCreator:
         @param point1 - map coordinate array (x, y) without offset (from 0 to SIZE_X)
         @param point2 - map coordinate array (x, y) without offset (from 0 to SIZE_Y)
         """
+        print("wall with pos: " + str(point1) + str(point2))
         point1_x =  point1[0]
         point1_y =  point1[1]
         point2_x =  point2[0]
@@ -72,28 +73,6 @@ class SdfCreator:
         else:
             return
         self.__spawnBox(Point(center_x, center_y, SIZE_Z), wall_size)
-
-
-    def addVerticalWall(self, wall_x, wall_y):
-        """ 
-        @brief Spawn vertical wall on wall of cell
-        @param wall_x - from 0 to CELLS_X_AMOUNT 
-        @param wall_y - from 0 to CELLS_Y_AMOUNT + 1
-        """
-        pos_x = wall_x * CELL_SIZE_X
-        pos_y = wall_y * CELL_SIZE_Y + CELL_SIZE_Y/2
-        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), VERTICAL_WALL_SIZE)
-
-
-    def addHorizontalWall(self, wall_x, wall_y):
-        """ 
-        @brief Spawn horisontal wall on wall of cell
-        @param wall_x - from 0 to CELLS_X_AMOUNT + 1
-        @param wall_y - from 0 to CELLS_Y_AMOUNT 
-        """
-        pos_x = wall_x * CELL_SIZE_X + CELL_SIZE_X/2
-        pos_y = wall_y * CELL_SIZE_Y
-        self.__spawnBox(Point(pos_x, pos_y, SIZE_Z), HORIZONTAL_WALL_SIZE)
 
 
     def addBox(self, cell_x, cell_y):

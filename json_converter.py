@@ -18,9 +18,10 @@ SIZE_NAME = "size"
 OBJECTS_NAME = "objects"
 OBJECTS_NAME_FIELD_NAME = "name"
 OBJECTS_POSITION_FIELD_NAME = "position"
+OBJECTS_POINT_1_FIELD_NAME = "point1"
+OBJECTS_POINT_2_FIELD_NAME = "point2"
 BOX_NAME = "box"
-VERTICAL_WALL_NAME = "vertical_wall"
-HORIZONTAL_WALL_NAME = "horizontal_wall"
+WALL_NAME = "wall"
 
 def create_json_from_gui(start_x, start_y, SIZE_X, SIZE_Y, boxesStatus, vWallsStatus, hWallsStatus):
     """ 
@@ -36,13 +37,23 @@ def create_json_from_gui(start_x, start_y, SIZE_X, SIZE_Y, boxesStatus, vWallsSt
     for r in range(0, len(vWallsStatus)):
         for c in range(0, len(vWallsStatus[0])):
             if vWallsStatus[r][c] == True:
-                obj = dict([(OBJECTS_NAME_FIELD_NAME, VERTICAL_WALL_NAME), (OBJECTS_POSITION_FIELD_NAME, [c, r])])
-                objects.append(obj)
+                point1_x = c * 2
+                point1_y = r * 2
+                point2_x = c * 2
+                point2_y = r * 2 + 2
+                print("create_json_from_gui: " + str([point1_x, point1_y]) + str([point2_x, point2_y]))
+                wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME), ("point1", [point1_x, point1_y]), ("point2", [point2_x, point2_y])])
+                objects.append(wall)
     for r in range(0, len(hWallsStatus)):
         for c in range(0, len(hWallsStatus[0])):
             if hWallsStatus[r][c] == True:
-                obj = dict([(OBJECTS_NAME_FIELD_NAME, HORIZONTAL_WALL_NAME), (OBJECTS_POSITION_FIELD_NAME, [c, r])])
-                objects.append(obj)
+                point1_x = c * 2
+                point1_y = r * 2
+                point2_x = c * 2 + 2
+                point2_y = r * 2
+                print("create_json_from_gui: " + str([point1_x, point1_y]) + str([point2_x, point2_y]))
+                wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME), ("point1", [point1_x, point1_y]), ("point2", [point2_x, point2_y])])
+                objects.append(wall)
 
     data = dict([(START_POSITION_NAME, [start_x, start_y] ),
                  (FINISH_POSITION_NAME, [0, 0] ),
@@ -64,12 +75,12 @@ def create_sdf_from_json(jsonFileName=JSON_DEFAULT_NAME, sdfFileName=SDF_DEFAULT
                             data.get(SIZE_NAME)[0],
                             data.get(SIZE_NAME)[1])
     for obj in data.get(OBJECTS_NAME):
-        position = obj.get(OBJECTS_POSITION_FIELD_NAME)
         if obj.get(OBJECTS_NAME_FIELD_NAME) == BOX_NAME:
+            position = obj.get(OBJECTS_POSITION_FIELD_NAME)
             sdfCreator.addBox(position[0], position[1])
-        if obj.get(OBJECTS_NAME_FIELD_NAME) == HORIZONTAL_WALL_NAME:
-            sdfCreator.addHorizontalWall(position[0], position[1])
-        if obj.get(OBJECTS_NAME_FIELD_NAME) == VERTICAL_WALL_NAME:
-            sdfCreator.addVerticalWall(position[0], position[1])
+        elif obj.get(OBJECTS_NAME_FIELD_NAME) == WALL_NAME:
+            point1 = obj.get(OBJECTS_POINT_1_FIELD_NAME)
+            point2 = obj.get(OBJECTS_POINT_2_FIELD_NAME)
+            sdfCreator.addWall(point1, point2)
     sdfCreator.writeWorldToFile(sdfFileName)
 
