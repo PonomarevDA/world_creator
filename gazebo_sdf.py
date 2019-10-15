@@ -47,6 +47,33 @@ class SdfCreator:
         f.write(etree.tostring(self.SDF_ROOT, pretty_print=True))
 
 
+    def addWall(self, point1, point2):
+        """ 
+        @brief Spawn wall (only vertical or horizontal)
+        @param point1 - map coordinate array (x, y) without offset (from 0 to SIZE_X)
+        @param point2 - map coordinate array (x, y) without offset (from 0 to SIZE_Y)
+        """
+        point1_x =  point1[0]
+        point1_y =  point1[1]
+        point2_x =  point2[0]
+        point2_y =  point2[1]
+        # vertical
+        if point1_x == point2_x:
+            center_x = point1_x
+            center_y = (point1_y + point2_y) / 2
+            wall_length = abs(point1_y - point2_y)
+            wall_size = Point(WALL_WIDTH, wall_length, SIZE_Z)
+        # horizontal
+        elif point1_y == point2_y:
+            center_x = (point1_x + point2_x) / 2
+            center_y = point1_y
+            wall_length = abs(point1_x - point2_x)
+            wall_size = Point(wall_length, WALL_WIDTH, SIZE_Z)
+        else:
+            return
+        self.__spawnBox(Point(center_x, center_y, SIZE_Z), wall_size)
+
+
     def addVerticalWall(self, wall_x, wall_y):
         """ 
         @brief Spawn vertical wall on wall of cell
