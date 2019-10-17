@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys, random
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QGridLayout, QLabel
 from PyQt5.QtGui import QPainter, QColor, QFont, QPen
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from enum import Enum
 
 # Constants:
@@ -23,34 +23,108 @@ class MainWindow(QWidget):
         super().__init__()
         self.initUI()
         self.initMap(36, 18)
+        self.createButtons()
 
     def initUI(self):
-
-        self.setGeometry(300, 300, 400, 320)
+        self.setGeometry(300, 300, 710, 320)
         self.setWindowTitle('World creator v.2')
+
+
         self.show()
 
+    def createButtons(self):
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+        label = QLabel(' ', self)
+        self.layout.addWidget(label, 0, 0)
+        self.layout.setSpacing(1)
+
+        self.buttons = list()
+
+        self.buttons.append(self.createButton('1. Choose map size'))
+        self.buttons[0].pressed.connect(self.chooseMapSizeCallback)
+        self.layout.addWidget(self.buttons[0], 1, 1)
+
+        self.buttons.append(self.createButton('2. Choose cells size'))
+        self.buttons[1].pressed.connect(self.chooseCellsSizeCallback)
+        self.layout.addWidget(self.buttons[1], 2, 1)
+
+        self.buttons.append(self.createButton('3. Choose start pose'))
+        self.buttons[2].pressed.connect(self.chooseStartPoseCallback)
+        self.layout.addWidget(self.buttons[2], 3, 1)
+
+        self.buttons.append(self.createButton('4. Choose end pose'))
+        self.buttons[3].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[3], 4, 1)
+
+        self.buttons.append(self.createButton('5. Choose boxes'))
+        self.buttons[4].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[4], 5, 1)
+
+        self.buttons.append(self.createButton('6. Choose walls'))
+        self.buttons[5].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[5], 6, 1)
+
+        self.buttons.append(self.createButton('7. Delete walls'))
+        self.buttons[6].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[6], 7, 1)
+
+        self.buttons.append(self.createButton('8. Choose signs'))
+        self.buttons[7].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[7], 8, 1)
+
+        self.buttons.append(self.createButton('9. Choose lights'))
+        self.buttons[8].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[8], 9, 1)
+
+        self.buttons.append(self.createButton('Load json'))
+        self.buttons[9].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[9], 11, 1)
+
+        self.buttons.append(self.createButton('Generate json'))
+        self.buttons[10].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[10], 13, 1)
+
+        self.buttons.append(self.createButton('Create sdf world from json'))
+        self.buttons[11].pressed.connect(self.chooseEndPoseCallback)
+        self.layout.addWidget(self.buttons[11], 14, 1)
+
+        self.layout.addWidget(QLabel('To create the world:', self), 0, 1)
+        self.layout.addWidget(QLabel('Or use these features:', self), 10, 1)
+        self.layout.addWidget(QLabel('Then press buttons below:', self), 12, 1)
+
+    def createButton(self, name):
+        but = QPushButton(name, self)
+        but.setFixedSize(QSize(200, 25))
+        return but
+
+    def chooseMapSizeCallback(self):
+        print(self.buttons[0].text())
+    def chooseCellsSizeCallback(self):
+        print(self.buttons[1].text())
+    def chooseStartPoseCallback(self):
+        print(self.buttons[2].text())
+    def chooseEndPoseCallback(self):
+        print(self.buttons[3].text())
+
+    def initMap(self, map_size_x, map_size_y):
         self.lastClickNumber = 0
         self.pressedFirstNode = None
         self.pressedSecondNode = None
 
-    def initMap(self, map_size_x, map_size_y):
         self.MAP_SIZE = [map_size_x, map_size_y]
         self.CELLS_SIZE = [2, 2]
         self.CELLS_AMOUNT = [ int(self.MAP_SIZE[0]/self.CELLS_SIZE[0]), 
                               int(self.MAP_SIZE[1]/self.CELLS_SIZE[1]) ]
         self.walls = list()
-        #self.cellsStatus = [[False] * self.CELLS_AMOUNT[0] for i in range(self.CELLS_AMOUNT[1])]
-        #self.hWallStatus = [[False] * (self.CELLS_AMOUNT[0]) for i in range(self.CELLS_AMOUNT[1] + 1)]
-        #self.vWallStatus = [[False] * (self.CELLS_AMOUNT[0] + 1) for i in range(self.CELLS_AMOUNT[1])]
-
         self.mode = Mode.CREATE_WALLS
+
 
     def mousePressEvent(self, e):
         if self.mode is Mode.CREATE_WALLS:
             pos = e.pos()
             pos = self.calculateNodeIndexes(pos.x(), pos.y())
-            if pos != None:
+            if pos is not None:
                 if self.lastClickNumber == 1:
                     self.lastClickNumber = 2
                     self.pressedSecondNode = pos
@@ -109,7 +183,8 @@ class MainWindow(QWidget):
         self.drawLine(qp, firstNodePose, secondNodePose)
 
 
-# ******************** Low level methods: raw draw and calculations ********************
+# *************** Low level methods: raw draw and calculations ***************
+# *************** Basicaly methods below work with real window positions *****
     def calculateNodeIndexes(self, point_x, point_y):
         """
         @brief Calculate node coordinate using real mouse position on window
@@ -170,7 +245,8 @@ class MainWindow(QWidget):
         self.tableBot = int(0.9 * windowHeight)
         self.tableTop = int(0.05 * windowHeight)
 
-        # It is important that table sizes must divided on cell size (or amount) without remainder
+        # It is important that table sizes must divided on cell size (or 
+        # amount) without remainder
         self.tableLeft = self.tableLeft - ((self.tableLeft - self.tableRight) % self.CELLS_AMOUNT[0])
         self.tableTop = self.tableTop - ((self.tableTop - self.tableBot) % self.CELLS_AMOUNT[1])
 
