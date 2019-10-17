@@ -25,6 +25,7 @@ class CollorCode(Enum):
     RED = str("FF0000")
 
 class MainWindow(QWidget):
+# *************** High level methods which allow create window ***************
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.initUI()
@@ -35,6 +36,18 @@ class MainWindow(QWidget):
         self.setGeometry(300, 300, 710, 320)
         self.setWindowTitle('World creator v.2')
         self.show()
+
+    def initMap(self, map_size_x, map_size_y):
+        self.lastClickNumber = 0
+        self.pressedFirstNode = None
+        self.pressedSecondNode = None
+
+        self.MAP_SIZE = [map_size_x, map_size_y]
+        self.CELLS_SIZE = [2, 2]
+        self.CELLS_AMOUNT = [ int(self.MAP_SIZE[0]/self.CELLS_SIZE[0]), 
+                              int(self.MAP_SIZE[1]/self.CELLS_SIZE[1]) ]
+        self.walls = list()
+        self.mode = Mode.NO_MODE
 
     def initButtons(self):
         self.layout = QGridLayout()
@@ -76,7 +89,6 @@ class MainWindow(QWidget):
 
         self.buttons.append(self.createButton('7. Delete walls'))
         self.buttons[6].pressed.connect(self.deleteWallsCallback)
-        self.buttons[6].setEnabled(False)
         self.layout.addWidget(self.buttons[6], 7, 1)
 
         self.buttons.append(self.createButton('8. Create signs'))
@@ -108,7 +120,6 @@ class MainWindow(QWidget):
         self.layout.addWidget(QLabel('Or use these features:', self), 10, 1)
         self.layout.addWidget(QLabel('Then press buttons below:', self), 12, 1)
 
-
     def createButton(self, name):
         but = QPushButton(name, self)
         but.setFixedSize(QSize(200, 25))
@@ -116,7 +127,7 @@ class MainWindow(QWidget):
     def setButtonCollor(self, but, collor = CollorCode.WHITE):
         but.setStyleSheet("QPushButton {background-color: #" + collor.value + "}")
 
-
+# ************** Control methods which allow to choose mode ******************
     def chooseMapSizeCallback(self):
         print(self.buttons[0].text())
     def chooseCellsSizeCallback(self):
@@ -128,10 +139,11 @@ class MainWindow(QWidget):
     def createBoxesCallback(self):
         print(self.buttons[4].text())
     def createWallsCallback(self):
-        print(self.buttons[5].text())
-        self.setMode(Mode(5))
+        print(self.buttons[Mode.CREATE_WALLS.value].text())
+        self.setMode(Mode.CREATE_WALLS)
     def deleteWallsCallback(self):
-        print(self.buttons[6].text())
+        print(self.buttons[Mode.DELETE_WALLS.value].text())
+        self.setMode(Mode.DELETE_WALLS)
     def createSignsCallback(self):
         print(self.buttons[7].text())
     def createLightsCallback(self):
@@ -155,19 +167,7 @@ class MainWindow(QWidget):
         except:
             print("Error: mode must be Enum")
 
-    def initMap(self, map_size_x, map_size_y):
-        self.lastClickNumber = 0
-        self.pressedFirstNode = None
-        self.pressedSecondNode = None
-
-        self.MAP_SIZE = [map_size_x, map_size_y]
-        self.CELLS_SIZE = [2, 2]
-        self.CELLS_AMOUNT = [ int(self.MAP_SIZE[0]/self.CELLS_SIZE[0]), 
-                              int(self.MAP_SIZE[1]/self.CELLS_SIZE[1]) ]
-        self.walls = list()
-        self.mode = Mode.NO_MODE
-
-
+# ************ Methods which allow to create and delete walls ****************
     def mousePressEvent(self, e):
         if self.mode is Mode.CREATE_WALLS:
             pos = e.pos()
@@ -181,8 +181,12 @@ class MainWindow(QWidget):
                 else:
                     self.lastClickNumber = 1
                     self.pressedFirstNode = pos
+        elif self.mode is Mode.DELETE_WALLS:
+            pos = e.pos()
+            pos = self.calculateEdgeIndexes(pos.x(), pos.y())
+            self.deleteWall(pos)
         else:
-            print("Warning: you should choose CREATE_WALLS mode")
+            print("Warning: you should choose mode")
 
 
     def addWall(self, e, nodesIndexes):
@@ -204,6 +208,34 @@ class MainWindow(QWidget):
         except:
             print("Error: it's not wall anyway: " + str(nodesIndexes))
 
+    def deleteWall(self, pos):
+        """
+        @bried Delete wall
+        """
+        try:
+            isVerticalFound = False
+            isHorizontalFound = False
+            for wall in self.walls:
+                if((wall[0][0] is pos[0]) and (wall[1][0] is pos[0])):
+                    if(wall[0][1] <= pos[1] and wall[1][1] >= pos[1]) or \
+                      (wall[1][1] <= pos[1] and wall[0][1] >= pos[1]):
+                        isVerticalFound = True
+                        break
+                if(wall[0][1] is pos[1]) and (wall[1][1] is pos[1]):
+                    if(wall[0][0] <= pos[0] and wall[1][0] >= pos[0]) or \
+                      (wall[1][0] <= pos[0] and wall[0][0] >= pos[0]):
+                        isHorizontalFound = True
+                        break
+            if isVerticalFound == True:
+                print("delete vertical: " + str(wall) + " and " + str(pos))
+                self.walls.remove(wall)
+            elif isHorizontalFound == True:
+                print("delete horizontal: " + str(wall) + " and " + str(pos))
+                self.walls.remove(wall)
+            self.update()
+        except:
+            print("Warning: it's not wall")
+
 
     def isThisWallVertical(self, nodesIndexes):
         return nodesIndexes[0][0] is nodesIndexes[1][0]
@@ -213,7 +245,6 @@ class MainWindow(QWidget):
         return False
 
     def paintEvent(self, event=None):
-
         qp = QPainter()
         qp.begin(self)
         self.drawPoints(qp)
@@ -238,17 +269,39 @@ class MainWindow(QWidget):
         """
         @brief Calculate node coordinate using real mouse position on window
         """
-        table = [point_x - self.tableLeft, point_y - self.tableTop]
+        tablePose = [point_x - self.tableLeft, point_y - self.tableTop]
         node = [int()] * 2
 
         for axe in range(0, 2):
-            node[axe] = int(table[axe] / self.cellsSize[axe])
-            if (table[axe] % self.cellsSize[axe]) > (self.cellsSize[axe] / 2):
+            node[axe] = int(tablePose[axe] / self.cellsSize[axe])
+            if tablePose[axe] % self.cellsSize[axe] > self.cellsSize[axe] / 2:
                 node[axe] += 1
             if node[axe] > (self.CELLS_AMOUNT[axe] + 1) or (node[axe] < 0):
                 return None
         return node
 
+    def calculateEdgeIndexes(self, point_x, point_y):
+        """
+        @brief Calculate edge coordinate using real mouse position on window
+        """
+        tablePose = [point_x - self.tableLeft, point_y - self.tableTop]
+        node = [int()] * 2
+
+        for axe in range(0, 2):
+            node[axe] = int(tablePose[axe] / self.cellsSize[axe])
+            fourthNode = self.cellsSize[axe]/4
+            remnant = tablePose[axe] % self.cellsSize[axe]
+            if (remnant >= fourthNode) and (remnant <= 3*fourthNode):
+                node[axe] += 0.5
+            elif remnant > 3*fourthNode:
+                node[axe] += 1
+            if node[axe] > (self.CELLS_AMOUNT[axe] + 1) or (node[axe] < 0):
+                print("Warning: out of range")
+                return None
+        if(((node[0] % 1) is 0) and ((node[1] % 1) is not 0)) or (((node[0] % 1) is not 0) and ((node[1] % 1) is 0)):
+            return node
+        return None
+            
 
     def calculateRealPosition(self, nodeIndexes):
         """
