@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QGridLayout, QLa
 from PyQt5.QtGui import QPainter, QColor, QFont, QPen, QBrush
 from PyQt5.QtCore import Qt, QSize
 from enum import Enum
+from json_converter import *
 
 # Constants:
 class Mode(Enum):
@@ -29,7 +30,7 @@ class MainWindow(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.initUI()
-        self.initMap(36, 18)
+        self.initMap(18, 18)
         self.initButtons()
 
     def initUI(self):
@@ -105,17 +106,15 @@ class MainWindow(QWidget):
 
         self.buttons.append(self.createButton('Load json'))
         self.buttons[9].pressed.connect(self.loadJsonCallback)
-        self.buttons[9].setEnabled(False)
+        #self.buttons[9].setEnabled(False)
         self.layout.addWidget(self.buttons[9], 11, 1)
 
         self.buttons.append(self.createButton('Generate json'))
         self.buttons[10].pressed.connect(self.generateJsonCallback)
-        self.buttons[10].setEnabled(False)
         self.layout.addWidget(self.buttons[10], 13, 1)
 
         self.buttons.append(self.createButton('Create sdf world from json'))
         self.buttons[11].pressed.connect(self.createSdfCallback)
-        self.buttons[11].setEnabled(False)
         self.layout.addWidget(self.buttons[11], 14, 1)
 
         self.layout.addWidget(QLabel('To create the world:', self), 0, 1)
@@ -153,12 +152,13 @@ class MainWindow(QWidget):
     def createLightsCallback(self):
         print(self.buttons[8].text())
     def loadJsonCallback(self):
-        print(self.buttons[8].text())
-    def generateJsonCallback(self):
         print(self.buttons[9].text())
-    def createSdfCallback(self):
+    def generateJsonCallback(self):
         print(self.buttons[10].text())
-
+        create_json_from_gui2(self.start, self.MAP_SIZE, None, self.walls)
+    def createSdfCallback(self):
+        print(self.buttons[11].text())
+        create_sdf_from_json()
     def setMode(self, mode):
         """
         @brief set mode from class Mode(enum)

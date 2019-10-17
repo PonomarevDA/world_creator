@@ -23,6 +23,25 @@ OBJECTS_POINT_2_FIELD_NAME = "point2"
 BOX_NAME = "box"
 WALL_NAME = "wall"
 
+
+def create_json_from_gui2(start, size, boxes, walls):
+    """ 
+    Create json file using frontend data
+    """
+    write_file = open(JSON_DEFAULT_NAME, "w")
+    objects = list()
+    for wall in walls:
+        wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME), 
+                     ("point1", [2*wall[0][0], 2*wall[0][1]]), 
+                     ("point2", [2*wall[1][0], 2*wall[1][1]])])
+        objects.append(wall)
+    data = dict([(START_POSITION_NAME, start),
+                 (FINISH_POSITION_NAME, [0, 0]),
+                 (SIZE_NAME, size),
+                 (OBJECTS_NAME, objects)])
+    print(data)
+    json.dump(data, write_file, indent=2)
+
 def create_json_from_gui(start_x, start_y, SIZE_X, SIZE_Y, boxesStatus, vWallsStatus, hWallsStatus):
     """ 
     Create json file using frontend data
@@ -52,7 +71,9 @@ def create_json_from_gui(start_x, start_y, SIZE_X, SIZE_Y, boxesStatus, vWallsSt
                 point2_x = c * 2 + 2
                 point2_y = r * 2
                 print("create_json_from_gui: " + str([point1_x, point1_y]) + str([point2_x, point2_y]))
-                wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME), ("point1", [point1_x, point1_y]), ("point2", [point2_x, point2_y])])
+                wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME),
+                             ("point1", [point1_x, point1_y]),
+                             ("point2", [point2_x, point2_y])])
                 objects.append(wall)
 
     data = dict([(START_POSITION_NAME, [start_x, start_y] ),

@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         self.cells = list()
         self.horizontalWall = list()
         self.verticalWall = list()
-        self.cellsStatus = [[False] * self.CELLS_AMOUNT_Y for i in range(self.CELLS_AMOUNT_X)]
+        self.cellsStatus = [[False] * self.CELLS_AMOUNT_X for i in range(self.CELLS_AMOUNT_Y)]
         self.horizontalWallStatus = [[False] * (self.CELLS_AMOUNT_X) for i in range(self.CELLS_AMOUNT_Y + 1)]
         self.verticalWallStatus = [[False] * (self.CELLS_AMOUNT_X + 1) for i in range(self.CELLS_AMOUNT_Y)]
 
