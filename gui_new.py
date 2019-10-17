@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys, random
 from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QGridLayout, QLabel
-from PyQt5.QtGui import QPainter, QColor, QFont, QPen
+from PyQt5.QtGui import QPainter, QColor, QFont, QPen, QBrush
 from PyQt5.QtCore import Qt, QSize
 from enum import Enum
 
@@ -49,6 +49,9 @@ class MainWindow(QWidget):
         self.walls = list()
         self.mode = Mode.NO_MODE
 
+        self.start = None
+        self.end = None
+
     def initButtons(self):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
@@ -70,7 +73,6 @@ class MainWindow(QWidget):
 
         self.buttons.append(self.createButton('3. Choose start pose'))
         self.buttons[2].pressed.connect(self.chooseStartPoseCallback)
-        self.buttons[2].setEnabled(False)
         self.layout.addWidget(self.buttons[2], 3, 1)
 
         self.buttons.append(self.createButton('4. Choose end pose'))
@@ -118,14 +120,15 @@ class MainWindow(QWidget):
 
         self.layout.addWidget(QLabel('To create the world:', self), 0, 1)
         self.layout.addWidget(QLabel('Or use these features:', self), 10, 1)
-        self.layout.addWidget(QLabel('Then press buttons below:', self), 12, 1)
+        self.layout.addWidget(QLabel('Then press buttons below:',self), 12, 1)
 
     def createButton(self, name):
         but = QPushButton(name, self)
         but.setFixedSize(QSize(200, 25))
         return but
     def setButtonCollor(self, but, collor = CollorCode.WHITE):
-        but.setStyleSheet("QPushButton {background-color: #" + collor.value + "}")
+        but.setStyleSheet("QPushButton {background-color: #" + \
+                          collor.value + "}")
 
 # ************** Control methods which allow to choose mode ******************
     def chooseMapSizeCallback(self):
@@ -133,7 +136,8 @@ class MainWindow(QWidget):
     def chooseCellsSizeCallback(self):
         print(self.buttons[1].text())
     def chooseStartPoseCallback(self):
-        print(self.buttons[2].text())
+        print(self.buttons[Mode.CHOOSE_START_POSITION.value].text())
+        self.setMode(Mode.CHOOSE_START_POSITION)
     def chooseEndPoseCallback(self):
         print(self.buttons[3].text())
     def createBoxesCallback(self):
@@ -169,27 +173,33 @@ class MainWindow(QWidget):
 
 # ************ Methods which allow to create and delete walls ****************
     def mousePressEvent(self, e):
-        if self.mode is Mode.CREATE_WALLS:
+        if self.mode is Mode.CHOOSE_START_POSITION:
+            pos = e.pos()
+            self.start = self.calculateCellIndexes(pos.x(), pos.y())
+            print("start pose was setted using mouse: " + str(self.start))
+        elif self.mode is Mode.CREATE_WALLS:
             pos = e.pos()
             pos = self.calculateNodeIndexes(pos.x(), pos.y())
-            if pos is not None:
-                if self.lastClickNumber is 1:
-                    self.lastClickNumber = 2
-                    self.pressedSecondNode = pos
-                    self.addWall(e, [self.pressedFirstNode, self.pressedSecondNode])
-                    self.update()
-                else:
-                    self.lastClickNumber = 1
-                    self.pressedFirstNode = pos
+            if self.lastClickNumber is 1:
+                self.lastClickNumber = 2
+                self.pressedSecondNode = pos
+                self.addWall([self.pressedFirstNode, self.pressedSecondNode])
+            else:
+                self.lastClickNumber = 1
+                self.pressedFirstNode = pos
         elif self.mode is Mode.DELETE_WALLS:
             pos = e.pos()
             pos = self.calculateEdgeIndexes(pos.x(), pos.y())
             self.deleteWall(pos)
         else:
             print("Warning: you should choose mode")
+        self.update()
+
+    def addBox(self, pos):
+        pass
 
 
-    def addWall(self, e, nodesIndexes):
+    def addWall(self, nodesIndexes):
         """
         @brief Add new wall
         @note there are simple rule to create it:
@@ -197,20 +207,23 @@ class MainWindow(QWidget):
         2. wall must not conflict with walls that already exists
         """
         try:
-            if (self.isThisWallVertical(nodesIndexes) or self.isThisWallHorizontal(nodesIndexes)):
+            if self.isThisWallVertical(nodesIndexes) or \
+               self.isThisWallHorizontal(nodesIndexes):
                 if self.isThereConflictBetweenWalls(nodesIndexes) is not True:
                     print("Wall was added: " + str(nodesIndexes))
                     self.walls.append(nodesIndexes)
                 else:
-                    print("Error: there is conflict between existing walls and this: " + str(nodesIndexes))
+                    print("Error: there is conflict between existing walls \
+                    and this: " + str(nodesIndexes))
             else:
-                print("Warning: wall is not vertical or horizontal: " + str(nodesIndexes))
+                print("Warning: wall is not vertical or horizontal: " + \
+                str(nodesIndexes))
         except:
             print("Error: it's not wall anyway: " + str(nodesIndexes))
 
     def deleteWall(self, pos):
         """
-        @bried Delete wall
+        @brief Delete wall
         """
         try:
             isVerticalFound = False
@@ -251,20 +264,49 @@ class MainWindow(QWidget):
         for wall in self.walls:
             self.drawWall(qp, wall[0], wall[1])
         self.drawTable(qp)
+        if self.start is not None:
+            self.drawBox(qp, self.start)
         qp.end()
 
 
-    def drawWall(self, qp, firstNodeIndexes, secondNodeIndexes):
+    def drawBox(self, qp, cellIndexes):
+        """
+        @brief Draw box on table
+        @param cellIndexes - x and y indexes from 0 to CELLS_AMOUNT - 1
+        """
+        try:
+            centerPos = self.calculateRealPositionByCellIndexes(cellIndexes)
+            self.drawRectangle(qp, centerPos, self.cellsSize)
+        except:
+            print("Error")
+
+
+    def drawWall(self, qp, indexesOfNode1, indexesOfNode2):
         """
         @brief Draw wall on table
+        @param indexesOfNode1 - x and y indexes from 0 to CELLS_AMOUNT - 1
+        @param indexesOfNode2 - x and y indexes from 0 to CELLS_AMOUNT - 1
         """
-        firstNodePose = self.calculateRealPosition(firstNodeIndexes)
-        secondNodePose = self.calculateRealPosition(secondNodeIndexes)
-        self.drawLine(qp, firstNodePose, secondNodePose)
+        posOfNode1 = self.calculateRealPositionByNodeIndexes(indexesOfNode1)
+        posOfNode2 = self.calculateRealPositionByNodeIndexes(indexesOfNode2)
+        self.drawLine(qp, posOfNode1, posOfNode2)
 
 
 # *************** Low level methods: raw draw and calculations ***************
 # *************** Basicaly methods below work with real window positions *****
+    def calculateCellIndexes(self, point_x, point_y):
+        """
+        @brief Calculate cell coordinate using real mouse position on window
+        """
+        tablePose = [point_x - self.tableLeft, point_y - self.tableTop]
+        node = [int()] * 2
+
+        for axe in range(0, 2):
+            node[axe] = int(tablePose[axe] / self.cellsSize[axe])
+            if node[axe] > (self.CELLS_AMOUNT[axe] + 1) or (node[axe] < 0):
+                return None
+        return node
+
     def calculateNodeIndexes(self, point_x, point_y):
         """
         @brief Calculate node coordinate using real mouse position on window
@@ -298,12 +340,21 @@ class MainWindow(QWidget):
             if node[axe] > (self.CELLS_AMOUNT[axe] + 1) or (node[axe] < 0):
                 print("Warning: out of range")
                 return None
-        if(((node[0] % 1) is 0) and ((node[1] % 1) is not 0)) or (((node[0] % 1) is not 0) and ((node[1] % 1) is 0)):
+        if(((node[0] % 1) is 0) and ((node[1] % 1) is not 0)) or \
+          (((node[0] % 1) is not 0) and ((node[1] % 1) is 0)):
             return node
         return None
-            
+      
 
-    def calculateRealPosition(self, nodeIndexes):
+    def calculateRealPositionByCellIndexes(self, cellIndexes):
+        """
+        @brief Calculate real node coordinate using node indexes
+        """
+        return [self.tableLeft + (cellIndexes[0] + 1) * self.cellsSize[0],
+                self.tableTop + (cellIndexes[1] + 1) * self.cellsSize[1]]
+      
+
+    def calculateRealPositionByNodeIndexes(self, nodeIndexes):
         """
         @brief Calculate real node coordinate using node indexes
         """
@@ -330,6 +381,18 @@ class MainWindow(QWidget):
         pen = QPen(Qt.black, 3, Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(*firstPoseOnWindow, *secondPoseOnWindow)
+
+
+    def drawRectangle(self, qp, centerPosition, size, collor=QColor(255, 0, 0)):
+        """ 
+        @brief Draw rectangle
+        @note it uses real window coordinates 
+        """
+        brush = QBrush(collor)
+        qp.setBrush(brush)
+        left = centerPosition[0] - self.cellsSize[0]
+        top = centerPosition[1] - self.cellsSize[1]
+        qp.drawRect(left, top, self.cellsSize[0], self.cellsSize[1])
 
 
     def drawTable(self, qp):
