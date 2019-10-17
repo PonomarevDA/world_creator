@@ -43,7 +43,7 @@ class SdfCreator:
         """ 
         @brief Write current world to file
         """
-        f = open(fileName, 'w')
+        f = open(fileName, 'wb')
         f.write(etree.tostring(self.SDF_ROOT, pretty_print=True))
 
 
