@@ -31,7 +31,7 @@ class MainWindow(QWidget):
         super().__init__()
         self.initUI()
         self.initMap(18, 18)
-        self.initButtons()
+        self.initControlButtons()
 
     def initUI(self):
         self.setGeometry(300, 300, 710, 320)
@@ -53,7 +53,7 @@ class MainWindow(QWidget):
         self.start = None
         self.end = None
 
-    def initButtons(self):
+    def initControlButtons(self):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         label = QLabel(' ', self)
@@ -181,12 +181,11 @@ class MainWindow(QWidget):
 
 # ************ Methods which allow to create and delete walls ****************
     def mousePressEvent(self, e):
+        pos = e.pos()
         if self.mode is Mode.CHOOSE_START_POSITION:
-            pos = e.pos()
             self.start = self.calculateCellIndexes(pos.x(), pos.y())
             print("start pose was setted using mouse: " + str(self.start))
         elif self.mode is Mode.CREATE_WALLS:
-            pos = e.pos()
             pos = self.calculateNodeIndexes(pos.x(), pos.y())
             if self.lastClickNumber is 1:
                 self.lastClickNumber = 2
@@ -196,7 +195,6 @@ class MainWindow(QWidget):
                 self.lastClickNumber = 1
                 self.pressedFirstNode = pos
         elif self.mode is Mode.DELETE_WALLS:
-            pos = e.pos()
             pos = self.calculateEdgeIndexes(pos.x(), pos.y())
             self.deleteWall(pos)
         else:
@@ -220,12 +218,12 @@ class MainWindow(QWidget):
         @brief Check if the wall is possible
         @note print the reason if wall is not possible
         """
-        if self.isThisWallPoint(nodesIndexes) is True:
+        if self.isWallOutOfRange(nodesIndexes) is True:
+            print("Warning: wall out of map: " + str(nodesIndexes))
+        elif self.isThisWallPoint(nodesIndexes) is True:
             print("Warning: wall can't be point: " + str(nodesIndexes))
         elif self.isThisWallDiagonal(nodesIndexes) is True:
             print("Warning: wall can't be diagonal: " + str(nodesIndexes))
-        elif self.isWallOutOfRange(nodesIndexes) is True:
-            print("Warning: wall out of map" + str(nodesIndexes))
         elif self.isThereConflictBetweenWalls(nodesIndexes) is True:
             print("Warning: there is conflict between existing walls \
             and this: " + str(nodesIndexes))
@@ -267,13 +265,13 @@ class MainWindow(QWidget):
     def isThisWallPoint(self, nodesIndexes):
         return nodesIndexes[0] == nodesIndexes[1]
     def isWallOutOfRange(self, nodesIndexes):
-        return  nodesIndexes[0][0] >= self.MAP_SIZE[0] or \
+        return  nodesIndexes[0][0] > self.CELLS_AMOUNT[0] or \
                 nodesIndexes[0][0] < 0 or \
-                nodesIndexes[1][0] >= self.MAP_SIZE[0] or \
+                nodesIndexes[1][0] > self.CELLS_AMOUNT[0] or \
                 nodesIndexes[1][0] < 0 or \
-                nodesIndexes[0][1] >= self.MAP_SIZE[1] or \
+                nodesIndexes[0][1] > self.CELLS_AMOUNT[1] or \
                 nodesIndexes[0][1] < 0 or \
-                nodesIndexes[1][1] >= self.MAP_SIZE[1] or \
+                nodesIndexes[1][1] > self.CELLS_AMOUNT[1] or \
                 nodesIndexes[1][1] < 0
     def isThisWallDiagonal(self, nodesIndexes):
         return ((self.isThisWallVertical(nodesIndexes) is False) and \
@@ -338,21 +336,24 @@ class MainWindow(QWidget):
     def calculateNodeIndexes(self, point_x, point_y):
         """
         @brief Calculate node coordinate using real mouse position on window
+        @note node indexes will be out of rate if point coordinate out of rate
         """
         tablePose = [point_x - self.tableLeft, point_y - self.tableTop]
         node = [int()] * 2
 
         for axe in range(0, 2):
             node[axe] = int(tablePose[axe] / self.cellsSize[axe])
+            # Line below is needed because of unexpected work of division of
+            # negative nubmers  
+            if tablePose[axe] < 0: node[axe] -= 1 
             if tablePose[axe] % self.cellsSize[axe] > self.cellsSize[axe] / 2:
                 node[axe] += 1
-            if node[axe] > (self.CELLS_AMOUNT[axe] + 1) or (node[axe] < 0):
-                return None
         return node
 
     def calculateEdgeIndexes(self, point_x, point_y):
         """
         @brief Calculate edge coordinate using real mouse position on window
+        @note edge indexes will be out of rate if point coordinate out of rate
         """
         tablePose = [point_x - self.tableLeft, point_y - self.tableTop]
         node = [int()] * 2
@@ -365,9 +366,6 @@ class MainWindow(QWidget):
                 node[axe] += 0.5
             elif remnant > 3*fourthNode:
                 node[axe] += 1
-            if node[axe] > (self.CELLS_AMOUNT[axe] + 1) or (node[axe] < 0):
-                print("Warning: out of range")
-                return None
         if(((node[0] % 1) is 0) and ((node[1] % 1) is not 0)) or \
           (((node[0] % 1) is not 0) and ((node[1] % 1) is 0)):
             return node
