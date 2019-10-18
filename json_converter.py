@@ -137,7 +137,7 @@ def create_sdf_from_json(jsonFileName=JSON_DEFAULT_NAME, sdfFileName=SDF_DEFAULT
     for obj in data.get(JsonNames.OBJECTS):
         if obj.get(JsonNames.NAME) == JsonNames.BOX:
             position = obj.get(JsonNames.POSITION)
-            sdfCreator.addBox(position[0], position[1])
+            sdfCreator.addBox(position)
         elif obj.get(JsonNames.NAME) == JsonNames.WALL:
             point1 = obj.get(JsonNames.POINT_1)
             point2 = obj.get(JsonNames.POINT_2)
