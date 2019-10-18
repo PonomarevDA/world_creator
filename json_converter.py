@@ -12,16 +12,17 @@ JSON_DEFAULT_NAME = "data_file.json"
 SDF_DEFAULT_NAME = "world.world"
 
 # JSON format settings
-START_POSITION_NAME = "start"
-FINISH_POSITION_NAME = "finish"
-SIZE_NAME = "size"
-OBJECTS_NAME = "objects"
-OBJECTS_NAME_FIELD_NAME = "name"
-OBJECTS_POSITION_FIELD_NAME = "position"
-OBJECTS_POINT_1_FIELD_NAME = "point1"
-OBJECTS_POINT_2_FIELD_NAME = "point2"
-BOX_NAME = "box"
-WALL_NAME = "wall"
+class JsonNames:
+    START = "start"
+    FINISH = "finish"
+    SIZE = "size"
+    OBJECTS = "objects"
+    NAME = "name"
+    POSITION = "position"
+    POINT_1 = "point1"
+    POINT_2 = "point2"
+    BOX = "box"
+    WALL = "wall"
 
 # Cheet sheet
 """
@@ -67,14 +68,14 @@ def create_json_from_gui2(start, size, boxes, walls):
     write_file = open(JSON_DEFAULT_NAME, "w")
     objects = list()
     for wall in walls:
-        wall = dict([ (OBJECTS_NAME_FIELD_NAME, WALL_NAME), 
-                      ("point1", node_indexes_to_map_pose(wall[0])), 
-                      ("point2", node_indexes_to_map_pose(wall[1])) ])
+        wall = dict([ (JsonNames.NAME, JsonNames.WALL), 
+                      (JsonNames.POINT_1, node_indexes_to_map_pose(wall[0])), 
+                      (JsonNames.POINT_2, node_indexes_to_map_pose(wall[1])) ])
         objects.append(wall)
-    data = dict([(START_POSITION_NAME, cell_indexes_to_map_pose(start)),
-                 (FINISH_POSITION_NAME, [0, 0]),
-                 (SIZE_NAME, size),
-                 (OBJECTS_NAME, objects)])
+    data = dict([(JsonNames.START, cell_indexes_to_map_pose(start)),
+                 (JsonNames.FINISH, [0, 0]),
+                 (JsonNames.SIZE, size),
+                 (JsonNames.OBJECTS, objects)])
     print(data)
     json.dump(data, write_file, indent=2)
 
@@ -93,35 +94,33 @@ def create_json_from_gui(start_x, start_y, SIZE_X, SIZE_Y, boxesStatus,
     for r in range(0, len(boxesStatus)):
         for c in range(0, len(boxesStatus[0])):
             if boxesStatus[r][c] == True:
-                obj = dict([(OBJECTS_NAME_FIELD_NAME, BOX_NAME),
-                            (OBJECTS_POSITION_FIELD_NAME, [c, r])])
+                obj = dict([(JsonNames.NAME, JsonNames.BOX),
+                            (JsonNames.POSITION, [c, r])])
                 objects.append(obj)
     for r in range(0, len(vWallsStatus)):
         for c in range(0, len(vWallsStatus[0])):
             if vWallsStatus[r][c] == True:
                 point1 = [ c * 2, r * 2 ]
                 point2 = [ c * 2, r * 2 + 2 ]
-                print("create_json_from_gui: " + str(point1) + str(point2))
-                wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME), 
-                             ("point1", point1), 
-                             ("point2", point2)])
+                wall = dict([(JsonNames.NAME, JsonNames.WALL), 
+                             (JsonNames.POINT_1, point1), 
+                             (JsonNames.POINT_2, point2)])
                 objects.append(wall)
     for r in range(0, len(hWallsStatus)):
         for c in range(0, len(hWallsStatus[0])):
             if hWallsStatus[r][c] == True:
                 point1 = [ c * 2, r * 2 ]
                 point2 = [ c * 2 + 2, r * 2 ]
-                print("create_json_from_gui: " + str(point1) + str(point2))
-                wall = dict([(OBJECTS_NAME_FIELD_NAME, WALL_NAME),
-                             ("point1", point1),
-                             ("point2", point2)])
+                wall = dict([(JsonNames.NAME, JsonNames.WALL),
+                             (JsonNames.POINT_1, point1),
+                             (JsonNames.POINT_2, point2)])
                 objects.append(wall)
 
-    data = dict([(START_POSITION_NAME, cell_indexes_to_map_pose(start)),
-                 (FINISH_POSITION_NAME, finish ),
-                 (SIZE_NAME, size),
-                 (OBJECTS_NAME, objects)])
-    print(data)
+    data = dict([(JsonNames.START, cell_indexes_to_map_pose(start)),
+                 (JsonNames.FINISH, finish ),
+                 (JsonNames.SIZE, size),
+                 (JsonNames.OBJECTS, objects)])
+    print("create_json_from_gui: " + str(data))
     json.dump(data, write_file, indent=2)
 
 
@@ -132,16 +131,16 @@ def create_sdf_from_json(jsonFileName=JSON_DEFAULT_NAME, sdfFileName=SDF_DEFAULT
     read_file = open(jsonFileName, "r")
     data = json.load(read_file)
 
-    sdfCreator = SdfCreator(data.get(START_POSITION_NAME),
-                            data.get(FINISH_POSITION_NAME),
-                            data.get(SIZE_NAME))
-    for obj in data.get(OBJECTS_NAME):
-        if obj.get(OBJECTS_NAME_FIELD_NAME) == BOX_NAME:
-            position = obj.get(OBJECTS_POSITION_FIELD_NAME)
+    sdfCreator = SdfCreator(data.get(JsonNames.START),
+                            data.get(JsonNames.FINISH),
+                            data.get(JsonNames.SIZE))
+    for obj in data.get(JsonNames.OBJECTS):
+        if obj.get(JsonNames.NAME) == JsonNames.BOX:
+            position = obj.get(JsonNames.POSITION)
             sdfCreator.addBox(position[0], position[1])
-        elif obj.get(OBJECTS_NAME_FIELD_NAME) == WALL_NAME:
-            point1 = obj.get(OBJECTS_POINT_1_FIELD_NAME)
-            point2 = obj.get(OBJECTS_POINT_2_FIELD_NAME)
+        elif obj.get(JsonNames.NAME) == JsonNames.WALL:
+            point1 = obj.get(JsonNames.POINT_1)
+            point2 = obj.get(JsonNames.POINT_2)
             sdfCreator.addWall(point1, point2)
     sdfCreator.writeWorldToFile(sdfFileName)
 
@@ -152,18 +151,18 @@ def load_backend_from_json(fileName = JSON_DEFAULT_NAME):
 
     walls = list()
     boxes = list()
-    for obj in data.get(OBJECTS_NAME):
-        if obj.get(OBJECTS_NAME_FIELD_NAME) == BOX_NAME:
-            position = obj.get(OBJECTS_POSITION_FIELD_NAME)
+    for obj in data.get(JsonNames.OBJECTS):
+        if obj.get(JsonNames.NAME) == JsonNames.BOX:
+            position = obj.get(JsonNames.POSITION)
             boxes.append(position)
-        elif obj.get(OBJECTS_NAME_FIELD_NAME) == WALL_NAME:
-            p1 = map_pose_to_node_indexes(obj.get(OBJECTS_POINT_1_FIELD_NAME))
-            p2 = map_pose_to_node_indexes(obj.get(OBJECTS_POINT_2_FIELD_NAME))
+        elif obj.get(JsonNames.NAME) == JsonNames.WALL:
+            p1 = map_pose_to_node_indexes(obj.get(JsonNames.POINT_1))
+            p2 = map_pose_to_node_indexes(obj.get(JsonNames.POINT_2))
             walls.append([p1, p2])
 
-    return list([map_pose_to_cell_indexes(data.get(START_POSITION_NAME)),
-                 map_pose_to_cell_indexes(data.get(FINISH_POSITION_NAME)),
-                 data.get(SIZE_NAME),
+    return list([map_pose_to_cell_indexes(data.get(JsonNames.START)),
+                 map_pose_to_cell_indexes(data.get(JsonNames.FINISH)),
+                 data.get(JsonNames.SIZE),
                  boxes,
                  walls])
 

@@ -106,7 +106,6 @@ class MainWindow(QWidget):
 
         self.buttons.append(self.createButton('Load json'))
         self.buttons[9].pressed.connect(self.loadJsonCallback)
-        #self.buttons[9].setEnabled(False)
         self.layout.addWidget(self.buttons[9], 11, 1)
 
         self.buttons.append(self.createButton('Generate json'))
@@ -153,11 +152,10 @@ class MainWindow(QWidget):
         print(self.buttons[8].text())
     def loadJsonCallback(self):
         print(self.buttons[9].text())
-        filePath = QFileDialog.getOpenFileName(self, "", "", "Json Files (*.json)")[0]
+        FILE_TYPES = "Json Files (*.json)"
+        filePath = QFileDialog.getOpenFileName(self, "", "", FILE_TYPES)[0]
         objects = load_backend_from_json(filePath)
-        print(self.start)
         self.start = objects[0]
-        print(self.start)
         finish = objects[1]
         size = objects[2]
         boxes = objects[3]
@@ -211,25 +209,30 @@ class MainWindow(QWidget):
 
     def addWall(self, nodesIndexes):
         """
-        @brief Add new wall
-        @note there are simple rule to create it:
-        1. wall must be only horizontal or vertical
-        2. wall must not conflict with walls that already exists
+        @brief Try to add new wall
         """
-        try:
-            if self.isThisWallVertical(nodesIndexes) or \
-               self.isThisWallHorizontal(nodesIndexes):
-                if self.isThereConflictBetweenWalls(nodesIndexes) is not True:
-                    print("Wall was added: " + str(nodesIndexes))
-                    self.walls.append(nodesIndexes)
-                else:
-                    print("Error: there is conflict between existing walls \
-                    and this: " + str(nodesIndexes))
-            else:
-                print("Warning: wall is not vertical or horizontal: " + \
-                str(nodesIndexes))
-        except:
-            print("Error: it's not wall anyway: " + str(nodesIndexes))
+        if self.isWallPossible(nodesIndexes) is True:
+            print("Wall was added: " + str(nodesIndexes))
+            self.walls.append(nodesIndexes)
+
+    def isWallPossible(self, nodesIndexes):
+        """
+        @brief Check if the wall is possible
+        @note print the reason if wall is not possible
+        """
+        if self.isThisWallPoint(nodesIndexes) is True:
+            print("Warning: wall can't be point: " + str(nodesIndexes))
+        elif self.isThisWallDiagonal(nodesIndexes) is True:
+            print("Warning: wall can't be diagonal: " + str(nodesIndexes))
+        elif self.isWallOutOfRange(nodesIndexes) is True:
+            print("Warning: wall out of map" + str(nodesIndexes))
+        elif self.isThereConflictBetweenWalls(nodesIndexes) is True:
+            print("Warning: there is conflict between existing walls \
+            and this: " + str(nodesIndexes))
+        else:
+            return True
+        return False
+
 
     def deleteWall(self, pos):
         """
@@ -261,10 +264,24 @@ class MainWindow(QWidget):
             print("Warning: it's not wall")
 
 
+    def isThisWallPoint(self, nodesIndexes):
+        return nodesIndexes[0] == nodesIndexes[1]
+    def isWallOutOfRange(self, nodesIndexes):
+        return  nodesIndexes[0][0] >= self.MAP_SIZE[0] or \
+                nodesIndexes[0][0] < 0 or \
+                nodesIndexes[1][0] >= self.MAP_SIZE[0] or \
+                nodesIndexes[1][0] < 0 or \
+                nodesIndexes[0][1] >= self.MAP_SIZE[1] or \
+                nodesIndexes[0][1] < 0 or \
+                nodesIndexes[1][1] >= self.MAP_SIZE[1] or \
+                nodesIndexes[1][1] < 0
+    def isThisWallDiagonal(self, nodesIndexes):
+        return ((self.isThisWallVertical(nodesIndexes) is False) and \
+                (self.isThisWallHorizontal(nodesIndexes) is False))
     def isThisWallVertical(self, nodesIndexes):
-        return nodesIndexes[0][0] is nodesIndexes[1][0]
+        return nodesIndexes[0][0] == nodesIndexes[1][0]
     def isThisWallHorizontal(self, nodesIndexes):
-        return nodesIndexes[0][1] is nodesIndexes[1][1]
+        return nodesIndexes[0][1] == nodesIndexes[1][1]
     def isThereConflictBetweenWalls(self, nodesIndexes):
         return False
 
