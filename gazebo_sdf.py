@@ -22,11 +22,11 @@ VERTICAL_WALL_SIZE = Point(WALL_WIDTH, MAX_WALL_LEN, SIZE_Z)
 
 
 class SdfCreator:
-    def __init__(self, start_x, start_y, size_x, size_y):
+    def __init__(self, start, finish, size):
         """ 
         @brief Constructor that create empty world with defined config 
         """
-        self.__setConfig(start_x, start_y, size_x, size_y)
+        self.__setConfig(start[0], start[1], size[0], size[1])
         self.__create_empty_world()
         self.CELLS_X_AMOUNT = int(self.SIZE_X / CELL_SIZE_X)
         self.CELLS_Y_AMOUNT = int(self.SIZE_Y / CELL_SIZE_Y)
@@ -125,8 +125,6 @@ class SdfCreator:
         MAX_MAP_SIZE = 40
         DEFAULT_MAP_SIZE = 18
         DEFAULT_POSE = 17
-        start_x = start_x * 2 + 1
-        start_y = start_y * 2 + 1
         self.SIZE_X = size_x if ((size_x >= MIN_MAP_SIZE) and (size_x <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
         self.SIZE_Y = size_y if ((size_y >= MIN_MAP_SIZE) and (size_y <= MAX_MAP_SIZE)) else DEFAULT_MAP_SIZE
         self.START_X = (start_x if ((start_x >= 0) and (start_x <= self.SIZE_X)) else DEFAULT_POSE)

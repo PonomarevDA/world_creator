@@ -35,7 +35,7 @@ def create_json_from_gui2(start, size, boxes, walls):
                      ("point1", [2*wall[0][0], 2*wall[0][1]]), 
                      ("point2", [2*wall[1][0], 2*wall[1][1]])])
         objects.append(wall)
-    data = dict([(START_POSITION_NAME, start),
+    data = dict([(START_POSITION_NAME, [start[0] * 2 + 1, start[1] * 2 + 1]),
                  (FINISH_POSITION_NAME, [0, 0]),
                  (SIZE_NAME, size),
                  (OBJECTS_NAME, objects)])
@@ -76,7 +76,7 @@ def create_json_from_gui(start_x, start_y, SIZE_X, SIZE_Y, boxesStatus, vWallsSt
                              ("point2", [point2_x, point2_y])])
                 objects.append(wall)
 
-    data = dict([(START_POSITION_NAME, [start_x, start_y] ),
+    data = dict([(START_POSITION_NAME, [start_x * 2 + 1, start_y * 2 + 1] ),
                  (FINISH_POSITION_NAME, [0, 0] ),
                  (SIZE_NAME, [SIZE_X, SIZE_Y]),
                  (OBJECTS_NAME, objects)])
@@ -91,10 +91,9 @@ def create_sdf_from_json(jsonFileName=JSON_DEFAULT_NAME, sdfFileName=SDF_DEFAULT
     read_file = open(jsonFileName, "r")
     data = json.load(read_file)
 
-    sdfCreator = SdfCreator(data.get(START_POSITION_NAME)[0],
-                            data.get(START_POSITION_NAME)[1],
-                            data.get(SIZE_NAME)[0],
-                            data.get(SIZE_NAME)[1])
+    sdfCreator = SdfCreator(data.get(START_POSITION_NAME),
+                            data.get(FINISH_POSITION_NAME),
+                            data.get(SIZE_NAME))
     for obj in data.get(OBJECTS_NAME):
         if obj.get(OBJECTS_NAME_FIELD_NAME) == BOX_NAME:
             position = obj.get(OBJECTS_POSITION_FIELD_NAME)
