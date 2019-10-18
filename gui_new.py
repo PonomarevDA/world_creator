@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys, random
-from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QGridLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QGridLayout, QLabel, QDialog, QFileDialog
 from PyQt5.QtGui import QPainter, QColor, QFont, QPen, QBrush
 from PyQt5.QtCore import Qt, QSize
 from enum import Enum
@@ -153,6 +153,16 @@ class MainWindow(QWidget):
         print(self.buttons[8].text())
     def loadJsonCallback(self):
         print(self.buttons[9].text())
+        filePath = QFileDialog.getOpenFileName(self, "", "", "Json Files (*.json)")[0]
+        objects = load_backend_from_json(filePath)
+        print(self.start)
+        self.start = objects[0]
+        print(self.start)
+        finish = objects[1]
+        size = objects[2]
+        boxes = objects[3]
+        self.walls = objects[4]
+        self.update()
     def generateJsonCallback(self):
         print(self.buttons[10].text())
         create_json_from_gui2(self.start, self.MAP_SIZE, None, self.walls)
@@ -225,6 +235,7 @@ class MainWindow(QWidget):
         """
         @brief Delete wall
         """
+        print(self.walls)
         try:
             isVerticalFound = False
             isHorizontalFound = False
