@@ -154,7 +154,7 @@ class MainWindow(QWidget):
         print(self.buttons[9].text())
         FILE_TYPES = "Json Files (*.json)"
         filePath = QFileDialog.getOpenFileName(self, "", "", FILE_TYPES)[0]
-        objects = load_backend_from_json(filePath)
+        objects = load_frontend_from_json(filePath)
         self.start = objects[0]
         finish = objects[1]
         size = objects[2]
@@ -163,7 +163,7 @@ class MainWindow(QWidget):
         self.update()
     def generateJsonCallback(self):
         print(self.buttons[10].text())
-        create_json_from_gui2(self.start, self.MAP_SIZE, None, self.walls)
+        create_json_from_gui(self.start, self.MAP_SIZE, None, self.walls)
     def createSdfCallback(self):
         print(self.buttons[11].text())
         create_sdf_from_json()
