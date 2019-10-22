@@ -12,7 +12,6 @@ class Point:
 
 #Constants
 WALL_WIDTH = float(0.1)
-#MAX_WALL_LEN = float(2)
 CELL_SIZE = [int(2), int(2)]
 HEGHT = float(0.5)
 
@@ -102,22 +101,27 @@ class SdfCreator:
     def __setBoxParams(self, box_root, box_position, box_size):
         """ 
         @brief Set box desired parameters
+        @note To avoid collision problem when objects spawn on borders of each
+            other, the collision length will reduce on WALL width size
         """
         box_name = "unit_box_" + str(self.box_counter)
+
         box_position_text = box_position.getString()
-        box_size_text = box_size.getString()
-        #collision_size = Point()
-        #if box_size.x > WALL_WIDTH:
-        #    collision_size = box_size.x - WALL_WIDTH
-        #box_collizion_size_text = 
-        #if box_size.x > WALL_WIDTH:
-        #    box_size.y -= WALL_WIDTH
+
+        box_visual_size_text = box_size.getString()
+
+        collision_size = box_size
+        if collision_size.x > WALL_WIDTH:
+            collision_size.x = collision_size.x - WALL_WIDTH
+        if collision_size.y > WALL_WIDTH:
+            collision_size.y -= WALL_WIDTH
+        box_collision_size_text = collision_size.getString()
 
         box_root.set("name", box_name)
         box_root.find("pose").text = box_position_text
         link = box_root.find("link")
-        link.find("collision").find("geometry").find("box").find("size").text = "0.1 0.1 0.5"
-        link.find("visual").find("geometry").find("box").find("size").text = box_size_text
+        link.find("collision").find("geometry").find("box").find("size").text = box_collision_size_text
+        link.find("visual").find("geometry").find("box").find("size").text = box_visual_size_text
 
     def __setConfig(self, start, finish, size):
         """ 
