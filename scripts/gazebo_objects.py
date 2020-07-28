@@ -11,6 +11,9 @@ WALL_HEIGHT = float(3.5)
 WALL_SPAWN_Z = WALL_HEIGHT / 2
 WALL_WIDTH = float(0.05)
 
+DOOR_HEIGHT = float(0.5)
+DOOR_SPAWN_Z = WALL_HEIGHT - DOOR_HEIGHT / 2
+
 SQUARE_HEIGHT = float(0.5)
 SQUARE_SPAWN_Z = SQUARE_HEIGHT / 2
 
@@ -80,6 +83,33 @@ class GazeboWall(GazeboObject):
                              (sub.y*self.map_params.cell_sz.y)**2)
 
         return '{} {} {}'.format(wall_length, WALL_WIDTH, WALL_HEIGHT)
+
+
+class GazeboDoor(GazeboObject):
+    def __init__(self, base, map_params):
+        super().__init__(base, map_params)
+
+        if type(base) is not objects.Door:
+            raise Exception('Invalid class passed')
+
+    def get_position_str(self):
+        center = (self.base.p1 + self.base.p2) / 2
+        sub = self.base.p2 - self.base.p1
+        door_angle = m.atan2(sub.y, sub.x)
+
+        self._swap_axes(center)
+        self._turn_to_physical(center)
+
+        return '{} {} {} 0 0 {}'.format(center.x, center.y,
+                                        DOOR_SPAWN_Z, -door_angle)
+
+    def get_size_str(self):
+        sub = self.base.p2 - self.base.p1
+
+        door_length = m.sqrt((sub.x*self.map_params.cell_sz.y)**2 +
+                             (sub.y*self.map_params.cell_sz.y)**2)
+
+        return '{} {} {}'.format(door_length, WALL_WIDTH, DOOR_HEIGHT)
 
 
 class GazeboSquare(GazeboObject):
