@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+	<model name="tl">
+		<link name="leg">
+			<pose>0 0 0.35 0 0 0</pose>
+			<inertial>
+				<mass>0.00693617</mass>
+				<inertia>
+					<ixx>0.00058102</ixx><ixy>0</ixy><ixz>0</ixz>
+					<iyy>0.00058102</iyy><iyz>0</iyz>
+					<izz>6.02e-06</izz>
+				</inertia>
+			</inertial>
+			<gravity>0</gravity>
+			<self_collide>0</self_collide>
+			<kinematic>0</kinematic>
+			<enable_wind>0</enable_wind>
+			<visual name="visual">
+				<geometry>
+					<cylinder>
+						<radius>0.01</radius>
+						<length>0.7</length>
+					</cylinder>
+				</geometry>
+				<material>Gazebo/Grey</material>
+			</visual>
+			<collision name="collision">
+				<geometry>
+					<cylinder>
+						<radius>0.01</radius>
+						<length>0.7</length>
+					</cylinder>
+				</geometry>
+			</collision>
+		</link>
+		<link name="head">
+			<pose>0 0 0.7 0 0 0</pose>
+			<inertial>
+				<mass>0.00693617</mass>
+				<inertia>
+					<ixx>0.00058102</ixx><ixy>0</ixy><ixz>0</ixz>
+					<iyy>0.00058102</iyy><iyz>0</iyz>
+					<izz>6.02e-06</izz>
+				</inertia>
+			</inertial>
+			<gravity>0</gravity>
+			<self_collide>0</self_collide>
+			<kinematic>0</kinematic>
+			<enable_wind>0</enable_wind>
+			<visual name="visual">
+				<geometry>
+					<box>
+						<size>0.2 0.2 0.3</size>
+					</box>
+					<!-- <cylinder> -->
+						<!-- <radius>0.10</radius> -->
+						<!-- <length>0.3</length> -->
+					<!-- </cylinder> -->
+				</geometry>
+				<material>
+					<script>
+						<uri>file://media/materials/scripts/gazebo.material</uri>
+						<name>Gazebo/Grey</name>
+					</script>
+				</material>
+			</visual>
+			<collision name="collision">
+				<geometry>
+					<box>
+						<size>0.2 0.2 0.3</size>
+					</box>
+					<!-- <cylinder> -->
+						<!-- <radius>0.15</radius> -->
+						<!-- <length>0.001</length> -->
+					<!-- </cylinder> -->
+				</geometry>
+			</collision>
+		</link>
+		<link name="topSphere">
+			<pose>0 -0.09 0.775 0 0 0</pose>
+			<inertial>
+				<mass>0.00693617</mass>
+				<inertia>
+					<ixx>0.00058102</ixx><ixy>0</ixy><ixz>0</ixz>
+					<iyy>0.00058102</iyy><iyz>0</iyz>
+					<izz>6.02e-06</izz>
+				</inertia>
+			</inertial>
+			<gravity>0</gravity>
+			<self_collide>0</self_collide>
+			<kinematic>0</kinematic>
+			<enable_wind>0</enable_wind>
+			<visual name="visual">
+				<geometry>
+					<sphere>
+						<radius>0.06</radius>
+					</sphere>
+				</geometry>
+					<material>
+						<script>
+							<uri>file://media/materials/scripts/gazebo.material</uri>
+							<name>Gazebo/Grey</name>
+						</script>
+					</material>
+				<plugin name="tf_plugin" filename="libtf_plugin.so"/>
+			</visual>
+			<collision name="collision">
+				<geometry>
+					<sphere>
+						<radius>0.05</radius>
+					</sphere>
+				</geometry>
+			</collision>
+		</link>
+		<link name="bottomSphere">
+			<pose>0 -0.09 0.625 0 0 0</pose>
+			<inertial>
+				<mass>0.00693617</mass>
+				<inertia>
+					<ixx>0.00058102</ixx><ixy>0</ixy><ixz>0</ixz>
+					<iyy>0.00058102</iyy><iyz>0</iyz>
+					<izz>6.02e-06</izz>
+				</inertia>
+			</inertial>
+			<gravity>0</gravity>
+			<self_collide>0</self_collide>
+			<kinematic>0</kinematic>
+			<enable_wind>0</enable_wind>
+			<visual name="visual">
+				<geometry>
+					<sphere>
+						<radius>0.06</radius>
+					</sphere>
+				</geometry>
+				<material>
+					<script>
+						<uri>file://media/materials/scripts/gazebo.material</uri>
+						<name>Gazebo/Grey</name>
+					</script>
+				</material>
+				<plugin name="tf_plugin" filename="libtf_plugin.so"/>
+			</visual>
+			<collision name="collision">
+				<geometry>
+					<sphere>
+						<radius>0.05</radius>
+					</sphere>
+				</geometry>
+			</collision>
+		</link>
+		<static>1</static>
+	</model>
+</sdf>

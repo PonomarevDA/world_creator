@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<sdf version="1.0">
+	<model name="sign">
+		<link name="leg">
+      		<pose>0 0 0.35 0 0 0</pose>
+			<inertial>
+				<mass>0.00693617</mass>
+				<inertia>
+					<ixx>0.00058102</ixx><ixy>0</ixy><ixz>0</ixz>
+					<iyy>0.00058102</iyy><iyz>0</iyz>
+					<izz>6.02e-06</izz>
+				</inertia>
+			</inertial>
+			<gravity>0</gravity>
+			<self_collide>0</self_collide>
+			<kinematic>0</kinematic>
+			<enable_wind>0</enable_wind>
+			<visual name="visual">
+				<geometry>
+					<cylinder>
+						<radius>0.01</radius>
+						<length>0.7</length>
+					</cylinder>
+				</geometry>
+				<material>
+          			Gazebo/Grey
+				</material>
+			</visual>
+			<collision name="collision">
+				<geometry>
+					<cylinder>
+						<radius>0.01</radius>
+						<length>0.7</length>
+					</cylinder>
+				</geometry>
+			</collision>
+		</link>
+		<link name="head">
+      		<pose>0 -0.011 0.7 1.5708 0 0</pose>
+			<inertial>
+				<mass>0.00693617</mass>
+				<inertia>
+					<ixx>0.00058102</ixx><ixy>0</ixy><ixz>0</ixz>
+					<iyy>0.00058102</iyy><iyz>0</iyz>
+					<izz>6.02e-06</izz>
+				</inertia>
+			</inertial>
+			<gravity>0</gravity>
+			<self_collide>0</self_collide>
+			<kinematic>0</kinematic>
+			<enable_wind>0</enable_wind>
+			<visual name="visual">
+				<geometry>
+					<mesh>
+            			<scale>1 1 1</scale>
+						<uri>model://right-sign/right.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<collision name="collision">
+				<geometry>
+					<cylinder>
+						<radius>0.15</radius>
+						<length>0.001</length>
+					</cylinder>
+				</geometry>
+			</collision>
+		</link>
+
+		<static>
+			1
+		</static>
+	</model>
+</sdf>

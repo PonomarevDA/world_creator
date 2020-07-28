@@ -4,12 +4,12 @@
     <inertial>
       <mass>1</mass>
       <inertia>
-        <ixx>0.166667</ixx>
+        <ixx>0</ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy>0.166667</iyy>
+        <iyy>0</iyy>
         <iyz>0</iyz>
-        <izz>0.166667</izz>
+        <izz>0</izz>
       </inertia>
     </inertial>
     <collision name='collision'>
@@ -40,7 +40,7 @@
       </geometry>
       <material>
         <script>
-          <name>Gazebo/Grey</name>
+          <name>Gazebo/Orange</name>
           <uri>file://media/materials/scripts/gazebo.material</uri>
         </script>
       </material>
@@ -49,5 +49,6 @@
     <enable_wind>0</enable_wind>
     <kinematic>0</kinematic>
   </link>
+	<static>1</static>
 </model>
 
