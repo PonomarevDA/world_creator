@@ -55,6 +55,7 @@ class WorldCreator:
         FUNCTIONS_MAPPING = {
             ObjectType.WALL: self.__addWall,
             ObjectType.DOOR: self.__addDoor,
+            ObjectType.WINDOW: self.__addWindow,
             ObjectType.SIGN: self.__addSign,
             ObjectType.BOX: self.__addBox,
             ObjectType.SQUARE: self.__addSquare,
@@ -80,6 +81,14 @@ class WorldCreator:
 
         pos_str = gz_door.get_position_str()
         size_str = gz_door.get_size_str()
+
+        self.__spawnBox(pos_str, size_str)
+
+    def __addWindow(self, window):
+        gz_window = go.GazeboWindow(window, self.map_params)
+
+        pos_str = gz_window.get_position_str()
+        size_str = gz_window.get_size_str()
 
         self.__spawnBox(pos_str, size_str)
 

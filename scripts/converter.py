@@ -28,6 +28,7 @@ Frontend v.2 data:
 5.  walls       indexes (node)              Wall(Point2D, Point2D)
 6.  signs       [indexes(half cell)), path] Sign([x, y], path)
 7.  doors       indexes (node)              Door(Point2D, Point2D)
+8.  windows     indexes (node)              Window(Point2D, Point2D)
 
 Json data:
 1.  start       meters                      list([x, y])
@@ -37,6 +38,7 @@ Json data:
 5.  walls       meters                      list([x, y], [x, y])
 6.  signs       [meters, type]              list([x, y], type)
 7.  doors       meters                      list([x, y], [x, y])
+7.  windows     meters                      list([x, y], [x, y])
 """
 
 def serialize_2_json(filepath: str, objects: dict, map_params: MapParams):

@@ -65,7 +65,8 @@ class ObjectType(Enum):
     SQUARE = 13,
     SIGN = 14,
     TRAFFIC_LIGHT = 15,
-    DOOR = 16
+    DOOR = 16,
+    WINDOW = 17,
 
 class CellQuarter(Enum):
     RIGHT_TOP = 0
@@ -203,6 +204,51 @@ class Door():
         return Door(Point2D.from_list(data['pnts'][0:2]), 
                     Point2D.from_list(data['pnts'][2:4]))
 
+class Window():
+    TYPE = ObjectType.WINDOW
+
+    def __init__(self, point1, point2):
+        self.p1 = point1
+        self.p2 = point2
+    
+    def __str__(self):
+        return "[({}) p1 = {}, p2 = {}]".format(type(self), self.p1, self.p2)
+    
+    def distance_2_point(self, pnt):
+        import numpy
+        from numpy import arccos, array, dot, pi, cross
+        from numpy.linalg import det, norm
+
+        A = numpy.array(self.p1.as_list())
+        B = numpy.array(self.p2.as_list())
+        P = numpy.array(pnt.as_list())
+
+        if arccos(dot((P - A) / norm(P - A), (B - A) / norm(B - A))) > m.pi / 2:
+            return norm(P - A)
+        if arccos(dot((P - B) / norm(P - B), (A - B) / norm(A - B))) > m.pi / 2:
+            return norm(P - B)
+        return norm(cross(A-B, A-P))/norm(B-A)
+
+    def render(self, qp):
+        qp.drawWindowLine(self.p1, self.p2, color=(0, 1, 1))
+        
+    def serialized(self):
+        for name, _class in SERIALIZATION_SUPPORT.items():
+            if type(self) == _class:
+                break
+        
+        data = {
+            'name': name,
+            'pnts': self.p1.as_list() + self.p2.as_list()
+        }
+        
+        return data
+
+    @staticmethod
+    def deserialize(data: dict):
+        return Window(Point2D.from_list(data['pnts'][0:2]), 
+                      Point2D.from_list(data['pnts'][2:4]))
+
 class Sign(Object):
     TYPE = ObjectType.SIGN
     
@@ -325,6 +371,7 @@ class Square(Object):
 SERIALIZATION_SUPPORT = {
     'wall': Wall,
     'door': Door,
+    'window': Window,
     'sign': Sign,
     'square': Square, 
     'box': Box, 

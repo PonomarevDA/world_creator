@@ -23,6 +23,7 @@ class Mode(Enum):
     TRAFFIC_LIGHTS = int(3)
     SQUARES = int(4)
     DOORS = int(5)
+    WINDOWS = int(6)
 
 class ColorCode(Enum):
     WHITE = str("FFFFFF")
@@ -54,6 +55,12 @@ class MyPainter(QPainter):
         self.setPen(pen)
         self.drawLine(node_pos1.x * self.cell_sz.x, node_pos1.y * self.cell_sz.y,
                       node_pos2.x * self.cell_sz.x, node_pos2.y * self.cell_sz.y)   
+
+    def drawWindowLine(self, node_pos1, node_pos2, color=(0, 0, 0)):
+        pen = QPen(Qt.blue, 2, Qt.SolidLine)
+        self.setPen(pen)
+        self.drawLine(node_pos1.x * self.cell_sz.x, node_pos1.y * self.cell_sz.y,
+                      node_pos2.x * self.cell_sz.x, node_pos2.y * self.cell_sz.y)  
 
     def drawQuarterImg(self, cell, quarter, img_path):
         self.half_cell_sz = self.cell_sz / 2
@@ -167,6 +174,7 @@ class Model:
             ObjectType.SQUARE: [],
             ObjectType.BOX: [],
             ObjectType.DOOR: [],
+            ObjectType.WINDOW: [],
         }
         
         if load_filepath:
@@ -234,10 +242,11 @@ class MainWindow(QWidget):
         mode_buttons = [
             (ModeButton('1. Create walls', Mode.WALLS, self.model, self), GuiWallsMode(self.model)),
             (ModeButton('2. Create doors', Mode.DOORS, self.model, self), GuiDoorsMode(self.model)),
-            (ModeButton('3. Create boxes', Mode.BOXES, self.model, self), GuiBoxesMode(self.model)),
-            (ModeButton('4. Create signs', Mode.SIGNS, self.model, self), GuiSignsMode(self.model)),
-            (ModeButton('5. Create traffic-lights', Mode.TRAFFIC_LIGHTS, self.model, self), GuiTrafficLightsMode(self.model)),
-            (ModeButton('6. Create squares', Mode.SQUARES, self.model, self), GuiSquaresMode(self.model)),
+            (ModeButton('3. Create windows', Mode.WINDOWS, self.model, self), GuiWindowsMode(self.model)),
+            (ModeButton('4. Create boxes', Mode.BOXES, self.model, self), GuiBoxesMode(self.model)),
+            (ModeButton('5. Create signs', Mode.SIGNS, self.model, self), GuiSignsMode(self.model)),
+            (ModeButton('6. Create traffic-lights', Mode.TRAFFIC_LIGHTS, self.model, self), GuiTrafficLightsMode(self.model)),
+            (ModeButton('7. Create squares', Mode.SQUARES, self.model, self), GuiSquaresMode(self.model)),
         ]        
         
         # Layout fill
@@ -384,8 +393,35 @@ class GuiDoorsMode(BaseGuiMode):
         
     def on_disable(self):
         self._prev_clicked_cross = None
-  
-      
+
+class GuiWindowsMode(BaseGuiMode):
+    def __init__(self, model):
+        super().__init__(model)
+        self._prev_clicked_cross = None
+
+    def processRightMousePressing(self, map_pos):
+        self._prev_clicked_cross = None
+
+        WINDOW_REMOVE_LIMIT = 0.1
+
+        filtered_windows = it.filterfalse(lambda x: x.distance_2_point(map_pos) < WINDOW_REMOVE_LIMIT, 
+                                        [window for window in self.model.objects[ObjectType.WINDOW]])
+
+        self.model.objects[ObjectType.WINDOW] = list(filtered_windows)
+
+    def processLeftMousePressing(self, map_pos):
+        map_cross = Canvas.getCrossClicked(map_pos)
+        
+        if self._prev_clicked_cross is not None and \
+           self._prev_clicked_cross != map_cross:
+            self.model.objects[ObjectType.WINDOW] += [Window(map_cross, self._prev_clicked_cross)]
+            # self._prev_clicked_cross = None
+        # else:
+        self._prev_clicked_cross = map_cross
+        
+    def on_disable(self):
+        self._prev_clicked_cross = None
+
 class GuiTrafficLightsMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
