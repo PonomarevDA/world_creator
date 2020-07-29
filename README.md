@@ -1,20 +1,26 @@
 # Gazebo sdf world creator
 
-This package allows quickly and easily create Gazebo words using GUI.
+This package allows quickly and easily create Gazebo worlds using GUI.
 
-### Preparation
+## Preparation
 
 You must have installed Gazebo.
 
-Then you shoold install required packages:
+Then you should install required packages:
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-### How to use GUI
+## How to use GUI
 
-Example:
+To create new world you should type:
+
+```bash
+./start_creator.sh
+```
+
+Also you can load existing world from json:
 
 ```bash
 ./start_creator.sh --load worlds/world2.json
@@ -26,17 +32,19 @@ For more information use help:
 ./start_creator.sh --help
 ```
 
-### How run world in gazebo
+## How to run a created gazebo world
+
+Example:
 
 ```bash
 ./start_gz.sh worlds/world2.world
 ```
 
-where new_world.world is a location of your world file.
+where `new_world.world` is a location of your world file.
 
-If you want to run a world in your application, don't forget to set up GAZEBO_MODEL_PATH.
+If you want to run a world in your application, don't forget to set up `GAZEBO_MODEL_PATH`.
 
-### For developer:
+## For developer:
 
 `world_creator.py` is the main script. It runs GUI and parses arguments.
 
