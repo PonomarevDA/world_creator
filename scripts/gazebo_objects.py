@@ -266,3 +266,20 @@ class GazeboTrafficLight(GazeboObject):
 
     def get_line_size_str(self):
         return "{0} {1}".format(self.map_params.cell_sz.x, self.LINE_WIDTH)
+
+class GazeboCube(GazeboObject):
+    def __init__(self, base, map_params):
+        super().__init__(base, map_params)
+        if type(base) is not objects.Cube:
+            raise Exception('Invalid class passed')
+
+    def _get_position(self):
+        pos = deepcopy(self.base.pos)
+        pos += ds.Point2D(self.map_params.cell_sz.x/2, self.map_params.cell_sz.y/2)
+        return pos
+
+    def get_position_str(self):
+        pos = self._get_position()
+        self._swap_axes(pos)
+        self._turn_to_physical(pos)
+        return "{0} {1} 0 0 0 0".format(pos.x, pos.y)

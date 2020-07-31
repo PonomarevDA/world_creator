@@ -24,6 +24,7 @@ class Mode(Enum):
     SQUARES = int(4)
     DOORS = int(5)
     WINDOWS = int(6)
+    CUBES = int(7)
 
 class ColorCode(Enum):
     WHITE = str("FFFFFF")
@@ -76,7 +77,10 @@ class MyPainter(QPainter):
         
         img = QImage(img_path).scaled(QSize(self.half_cell_sz.x-1, self.half_cell_sz.y-1))
         self.drawImage(render_x * self.cell_sz.x + 1, render_y * self.cell_sz.y + 1, img)
-        
+
+    def drawImg(self, cell, img_path):
+        img = QImage(img_path).scaled(QSize(self.cell_sz.x - 1, self.cell_sz.y - 1))
+        self.drawImage(cell.x * self.cell_sz.x + 1, cell.y * self.cell_sz.y + 1, img)
 
 class Canvas(QWidget):
     def __init__(self, model, parent=None):
@@ -175,6 +179,7 @@ class Model:
             ObjectType.BOX: [],
             ObjectType.DOOR: [],
             ObjectType.WINDOW: [],
+            ObjectType.CUBE: []
         }
         
         if load_filepath:
@@ -247,6 +252,7 @@ class MainWindow(QWidget):
             (ModeButton('5. Create signs', Mode.SIGNS, self.model, self), GuiSignsMode(self.model)),
             (ModeButton('6. Create traffic-lights', Mode.TRAFFIC_LIGHTS, self.model, self), GuiTrafficLightsMode(self.model)),
             (ModeButton('7. Create squares', Mode.SQUARES, self.model, self), GuiSquaresMode(self.model)),
+            (ModeButton('8. Create cubes', Mode.CUBES, self.model, self), GuiCubesMode(self.model)),
         ]        
         
         # Layout fill
@@ -316,10 +322,10 @@ class GuiBoxesMode(BaseGuiMode):
     def processRightMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
 
-        for box in self.model.objects[ObjectType.BOX]:
-            if box.pos == map_cell:
-                print("Delete object: {}".format(box))
-                self.model.objects[ObjectType.BOX].remove(box)
+        for obj in self.model.objects[ObjectType.BOX]:
+            if obj.pos == map_cell:
+                print("Delete object: {}".format(obj))
+                self.model.objects[ObjectType.BOX].remove(obj)
 
 
 class GuiSquaresMode(BaseGuiMode):
@@ -427,9 +433,10 @@ class GuiTrafficLightsMode(BaseGuiMode):
         map_cell = Canvas.getCellClicked(map_pos)
         orient = Canvas.getCellQuarter(map_pos)
         
-        new_tl = TrafficLight(map_cell, orient)
-        self.model.objects[ObjectType.TRAFFIC_LIGHT] += [new_tl]
-        print("Add object: {}".format(new_tl))
+        model = TrafficLight(map_cell, orient)
+        self.model.objects[ObjectType.TRAFFIC_LIGHT] += [model]
+
+        print("Add object: {}".format(model))
         
     def processRightMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
@@ -439,7 +446,20 @@ class GuiTrafficLightsMode(BaseGuiMode):
             if tl.pos == map_cell and tl.orient == orient:
                 log.debug("Delete object {}".format(tl))
                 self.model.objects[ObjectType.TRAFFIC_LIGHT].remove(tl)
-  
+
+class GuiCubesMode(BaseGuiMode):
+    def processLeftMousePressing(self, map_pos):
+        map_cell = Canvas.getCellClicked(map_pos)
+        model = Cube(map_cell)
+        self.model.objects[ObjectType.CUBE] += [model]
+        print("Add object: {}".format(model))
+
+    def processRightMousePressing(self, map_pos):
+        map_cell = Canvas.getCellClicked(map_pos)
+        for obj in self.model.objects[ObjectType.CUBE]:
+            if obj.pos == map_cell:
+                print("Delete object: {}".format(obj))
+                self.model.objects[ObjectType.CUBE].remove(obj)
 
 class GuiSignsMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):

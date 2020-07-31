@@ -13,6 +13,7 @@ SAMPLE_BOX_PATH = "models/box.sdf"
 SAMPLE_WINDOW_PATH = "models/window.sdf"
 SAMPLE_LINE_PATH = "models/line.sdf"
 TRAFFIC_LIGHT_PATH = "model://traffic-light"
+CUBE_PATH = "model://cube"
 EMPTY_WORLD_PATH = "models/empty_world.world"
 
 # Signs materials
@@ -31,6 +32,7 @@ class WorldCreator:
     window_counter = 0
     sign_counter = 0
     traffic_light_counter = 0
+    cube_counter = 0
 
     def __init__(self, map_params: MapParams):
         """
@@ -61,7 +63,8 @@ class WorldCreator:
             ObjectType.SIGN: self.__addSign,
             ObjectType.BOX: self.__addBox,
             ObjectType.SQUARE: self.__addSquare,
-            ObjectType.TRAFFIC_LIGHT: self.__addTrafficLight
+            ObjectType.TRAFFIC_LIGHT: self.__addTrafficLight,
+            ObjectType.CUBE: self.__addCube,
         }
 
         if obj.TYPE not in FUNCTIONS_MAPPING:
@@ -225,6 +228,31 @@ class WorldCreator:
         link.find("visual").find("geometry").find("plane").find("size").text = size_str
 
         self.SDF_ROOT.find("world").insert(0, model_root)
+
+    def __addCube(self, model):
+        gazebo_object = go.GazeboCube(model, self.map_params)
+        pos_str = gazebo_object.get_position_str()
+        self.__spawnCube(pos_str)
+
+    def __spawnCube(self, pos_str):
+        model_path = CUBE_PATH
+        counter = self.cube_counter
+        model_name = "cube"
+        log.debug("cube with pos: {}".format(pos_str))
+
+        model_root = etree.Element("include")
+        uri_elem = etree.Element("uri")
+        uri_elem.text = model_path
+        name_elem = etree.Element("name")
+        name_elem.text = "{}_{}".format(model_name, counter)
+        pose_elem = etree.Element("pose")
+        pose_elem.text = pos_str
+        model_root.append(uri_elem)
+        model_root.append(name_elem)
+        model_root.append(pose_elem)
+        self.SDF_ROOT.find("world").insert(0, model_root)
+
+        self.cube_counter += 1
 
     def __create_empty_world(self):
         """

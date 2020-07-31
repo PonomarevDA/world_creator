@@ -25,6 +25,7 @@ class ImagesPaths():
     FORWARD_OR_RIGHT = os.path.join(PATH_TO_IMAGE, 'forward-right-sign/frwd_right.png')
 
 TRAFFIC_LIGHT_IMG_PATH = 'models/traffic-light.png'
+CUBE_IMG_PATH = 'models/cube/image.png'
 
 def sign_path_to_sign_type(img_path):
     if img_path is ImagesPaths.STOP:
@@ -67,6 +68,7 @@ class ObjectType(Enum):
     TRAFFIC_LIGHT = 15,
     DOOR = 16,
     WINDOW = 17,
+    CUBE = 18,
 
 class CellQuarter(Enum):
     RIGHT_TOP = 0
@@ -314,34 +316,54 @@ class TrafficLight(Object):
     def deserialize(data: dict):
         return TrafficLight(Point2D.from_list(data['pos']), 
                             CellQuarter(data['orient']))
+
+class Cube(Object):
+    TYPE = ObjectType.CUBE
     
+    def __init__(self, pos):
+        self.pos = pos
+    
+    def render(self, qp):
+        qp.drawImg(self.pos, CUBE_IMG_PATH)
+    
+    def serialized(self):
+        for name, _class in SERIALIZATION_SUPPORT.items():
+            if type(self) == _class:
+                break
+        data = {
+            'name': name,
+            'pos': self.pos.as_list(),
+        }
+        return data        
+    
+    @staticmethod
+    def deserialize(data: dict):
+        return Cube(Point2D.from_list(data['pos']))
     
 class Box(Object):
     TYPE = ObjectType.BOX
 
     def __init__(self, pos: Point2D):
         self.pos = pos
-   
+
     def render(self, qp):
         qp.fillCell(self.pos, color=(150, 150, 150))
-        
+
     def serialized(self):
         for name, _class in SERIALIZATION_SUPPORT.items():
             if type(self) == _class:
                 break
-        
         data = {
             'name': name,
             'pos': self.pos.as_list()
         }
-        
         return data
 
     @staticmethod
     def deserialize(data: dict):
         return Box(Point2D.from_list(data['pos']))
-     
-    
+
+
 class Square(Object):
     TYPE = ObjectType.SQUARE
 
@@ -376,5 +398,6 @@ SERIALIZATION_SUPPORT = {
     'square': Square, 
     'box': Box, 
     'traffic_light': TrafficLight,
+    'cube': Cube,
 }
     
