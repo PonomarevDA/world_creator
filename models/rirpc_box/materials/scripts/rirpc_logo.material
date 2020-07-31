@@ -1,0 +1,14 @@
+material RirpcLogo0
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture ../textures/rirpc_logo.jpg
+        # scale 0.5 0.5
+      }
+    }
+  }
+}

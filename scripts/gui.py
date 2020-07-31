@@ -284,6 +284,7 @@ class MainWindow(QWidget):
 # ***************************** BaseGuiMode ********************************
 class BaseGuiMode():
     """ @brief Interface for button features """
+    REMOVE_LIMIT = 0.25
     def __init__(self, model):
         self.model = model
 
@@ -335,12 +336,8 @@ class GuiWallsMode(BaseGuiMode):
 
     def processRightMousePressing(self, map_pos):
         self._prev_clicked_cross = None
-
-        WALL_REMOVE_LIMIT = 0.1
-
-        filtered_walls = it.filterfalse(lambda x: x.distance_2_point(map_pos) < WALL_REMOVE_LIMIT, 
+        filtered_walls = it.filterfalse(lambda x: x.distance_2_point(map_pos) < BaseGuiMode.REMOVE_LIMIT,
                                         [wall for wall in self.model.objects[ObjectType.WALL]])
-
         self.model.objects[ObjectType.WALL] = list(filtered_walls)
 
     def processLeftMousePressing(self, map_pos):
@@ -364,12 +361,8 @@ class GuiDoorsMode(BaseGuiMode):
 
     def processRightMousePressing(self, map_pos):
         self._prev_clicked_cross = None
-
-        DOOR_REMOVE_LIMIT = 0.1
-
-        filtered_doors = it.filterfalse(lambda x: x.distance_2_point(map_pos) < DOOR_REMOVE_LIMIT, 
+        filtered_doors = it.filterfalse(lambda x: x.distance_2_point(map_pos) < BaseGuiMode.REMOVE_LIMIT,
                                         [door for door in self.model.objects[ObjectType.DOOR]])
-
         self.model.objects[ObjectType.DOOR] = list(filtered_doors)
 
     def processLeftMousePressing(self, map_pos):
@@ -392,12 +385,8 @@ class GuiWindowsMode(BaseGuiMode):
 
     def processRightMousePressing(self, map_pos):
         self._prev_clicked_cross = None
-
-        WINDOW_REMOVE_LIMIT = 0.1
-
-        filtered_windows = it.filterfalse(lambda x: x.distance_2_point(map_pos) < WINDOW_REMOVE_LIMIT, 
+        filtered_windows = it.filterfalse(lambda x: x.distance_2_point(map_pos) < BaseGuiMode.REMOVE_LIMIT,
                                         [window for window in self.model.objects[ObjectType.WINDOW]])
-
         self.model.objects[ObjectType.WINDOW] = list(filtered_windows)
 
     def processLeftMousePressing(self, map_pos):
