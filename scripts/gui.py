@@ -25,13 +25,6 @@ class Mode(Enum):
     DOORS = int(5)
     WINDOWS = int(6)
     CUBES = int(7)
-
-class ColorCode(Enum):
-    WHITE = str("FFFFFF")
-    BLUE = str("0000FF")
-    GREEN = str("00FF00")
-    RED = str("FF0000")
-    
 # ***************************** Main window *********************************
 
 class MyPainter(QPainter):
@@ -45,23 +38,11 @@ class MyPainter(QPainter):
         self.setPen(Qt.NoPen)
         self.drawRect(cell_pos.x * self.cell_sz.x, cell_pos.y * self.cell_sz.y, 
                       self.cell_sz.x, self.cell_sz.y)
-    
-    def drawWallLine(self, node_pos1, node_pos2, color=(0, 0, 0)):
-        self.setPen(QPen(QColor(*color), 3))
+
+    def drawSolidLine(self, node_pos1, node_pos2, color=Qt.black):
+        self.setPen(QPen(color, 3, Qt.SolidLine))
         self.drawLine(node_pos1.x * self.cell_sz.x, node_pos1.y * self.cell_sz.y,
                       node_pos2.x * self.cell_sz.x, node_pos2.y * self.cell_sz.y)
-
-    def drawDoorLine(self, node_pos1, node_pos2, color=(0, 0, 0)):
-        pen = QPen(Qt.green, 2, Qt.SolidLine)
-        self.setPen(pen)
-        self.drawLine(node_pos1.x * self.cell_sz.x, node_pos1.y * self.cell_sz.y,
-                      node_pos2.x * self.cell_sz.x, node_pos2.y * self.cell_sz.y)   
-
-    def drawWindowLine(self, node_pos1, node_pos2, color=(0, 0, 0)):
-        pen = QPen(Qt.blue, 2, Qt.SolidLine)
-        self.setPen(pen)
-        self.drawLine(node_pos1.x * self.cell_sz.x, node_pos1.y * self.cell_sz.y,
-                      node_pos2.x * self.cell_sz.x, node_pos2.y * self.cell_sz.y)  
 
     def drawQuarterImg(self, cell, quarter, img_path):
         self.half_cell_sz = self.cell_sz / 2
@@ -157,14 +138,21 @@ class Canvas(QWidget):
         self.update()
            
     def drawMap(self, qp):
-        thinPen = QPen(Qt.black, 1, Qt.SolidLine)
-        qp.setPen(thinPen)
+        dotPen = QPen(Qt.black, 1, Qt.DotLine)
+        qp.setPen(dotPen)
         qp.drawRect(0, 0, self.canvasSz.x-1, self.canvasSz.y-1)
         for row in range(1, self.model.map_params.n_cells.y):
             qp.drawLine(0, row*self.cellSz.y, self.canvasSz.x-1, row*self.cellSz.y)
         for col in range(1, self.model.map_params.n_cells.x):
             qp.drawLine(col*self.cellSz.x, 0, col*self.cellSz.x, self.canvasSz.y-1)
-    
+
+        dashPen = QPen(Qt.black, 1, Qt.DashLine)
+        qp.setPen(dashPen)
+        qp.drawRect(0, 0, self.canvasSz.x-1, self.canvasSz.y-1)
+        for row in range(0, self.model.map_params.n_cells.y, 4):
+            qp.drawLine(0, row*self.cellSz.y, self.canvasSz.x-1, row*self.cellSz.y)
+        for col in range(0, self.model.map_params.n_cells.x, 4):
+            qp.drawLine(col*self.cellSz.x, 0, col*self.cellSz.x, self.canvasSz.y-1)
     
 class Model:
     # Class for keeping main processing data
@@ -223,14 +211,11 @@ class ModeButton(QPushButton):
 class MainWindow(QWidget):
     def __init__(self, load_filepath, save_file_prefix, map_params):
         super().__init__()
-        WINDOW_TITLE = 'World creator v.2'
-        self.setWindowTitle(WINDOW_TITLE)
-        self.show()
-        
-        self.model = Model(map_params, load_filepath)
-
         self.json_save_fpath = save_file_prefix + '.json'
         self.world_save_fpath = save_file_prefix + '.world'
+        self.setWindowTitle(self.json_save_fpath)
+        self.show()
+        self.model = Model(map_params, load_filepath)
 
         layout = QGridLayout()
         layout.setSpacing(5)

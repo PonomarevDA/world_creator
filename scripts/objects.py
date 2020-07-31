@@ -4,6 +4,7 @@ from enum import Enum
 import logging as log
 import math as m
 from data_structures import Point2D, Size2D
+from PyQt5.QtCore import Qt
 
 APP_VERSION = 1.0
 
@@ -141,7 +142,7 @@ class Wall():
         return norm(cross(A-B, A-P))/norm(B-A)
 
     def render(self, qp):
-        qp.drawWallLine(self.p1, self.p2, color=(0, 0, 0))
+        qp.drawSolidLine(self.p1, self.p2, color=Qt.black)
         
     def serialized(self):
         for name, _class in SERIALIZATION_SUPPORT.items():
@@ -187,7 +188,7 @@ class Door():
         return norm(cross(A-B, A-P))/norm(B-A)
 
     def render(self, qp):
-        qp.drawDoorLine(self.p1, self.p2, color=(0, 1, 1))
+        qp.drawSolidLine(self.p1, self.p2, color=Qt.green)
         
     def serialized(self):
         for name, _class in SERIALIZATION_SUPPORT.items():
@@ -232,7 +233,7 @@ class Window():
         return norm(cross(A-B, A-P))/norm(B-A)
 
     def render(self, qp):
-        qp.drawWindowLine(self.p1, self.p2, color=(0, 1, 1))
+        qp.drawSolidLine(self.p1, self.p2, color=Qt.blue)
         
     def serialized(self):
         for name, _class in SERIALIZATION_SUPPORT.items():
