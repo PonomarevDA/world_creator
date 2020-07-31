@@ -14,8 +14,10 @@ WALL_WIDTH = float(0.05)
 DOOR_HEIGHT = float(0.5)
 DOOR_SPAWN_Z = WALL_HEIGHT - DOOR_HEIGHT / 2
 
-WINDOW_HEIGHT = float(0.5)
-WINDOW_SPAWN_Z = WALL_HEIGHT / 2
+WINDOW_HEIGHT = float(3.5)
+WINDOW_MATERIAL_HEIGHT = float(1.0)
+WINDOW_SPAWN_Z = WINDOW_HEIGHT / 2
+WINDOW_WIDTH = WALL_WIDTH
 
 SQUARE_HEIGHT = float(0.5)
 SQUARE_SPAWN_Z = SQUARE_HEIGHT / 2
@@ -139,7 +141,7 @@ class GazeboWindow(GazeboObject):
         window_length = m.sqrt((sub.x*self.map_params.cell_sz.y)**2 +
                              (sub.y*self.map_params.cell_sz.y)**2)
 
-        return '{} {} {}'.format(window_length, WALL_WIDTH, WINDOW_HEIGHT)
+        return '{} {} {}'.format(window_length, WINDOW_WIDTH, WINDOW_MATERIAL_HEIGHT)
 
 class GazeboSquare(GazeboObject):
     def __init__(self, base, map_params):
