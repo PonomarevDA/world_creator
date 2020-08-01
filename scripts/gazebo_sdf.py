@@ -12,8 +12,11 @@ import gazebo_objects as go
 SAMPLE_BOX_PATH = "models/box.sdf"
 SAMPLE_WINDOW_PATH = "models/window.sdf"
 SAMPLE_LINE_PATH = "models/line.sdf"
+SAMPLE_QR_CUBE_PATH = "models/qr_cube.sdf"
+
 TRAFFIC_LIGHT_PATH = "model://traffic-light"
 CUBE_PATH = "model://cube"
+
 EMPTY_WORLD_PATH = "models/empty_world.world"
 
 # Signs materials
@@ -33,6 +36,7 @@ class WorldCreator:
     sign_counter = 0
     traffic_light_counter = 0
     cube_counter = 0
+    qr_cube_counter = 0
 
     def __init__(self, map_params: MapParams):
         """
@@ -65,6 +69,7 @@ class WorldCreator:
             ObjectType.SQUARE: self.__addSquare,
             ObjectType.TRAFFIC_LIGHT: self.__addTrafficLight,
             ObjectType.CUBE: self.__addCube,
+            ObjectType.QR_CUBE: self.__addQrCube,
         }
 
         if obj.TYPE not in FUNCTIONS_MAPPING:
@@ -119,8 +124,8 @@ class WorldCreator:
         link.find("visual").find("geometry").find("box").find("size").text = size_str
         self.SDF_ROOT.find("world").insert(0, model_root)
 
-    def __addWindow(self, window):
-        gz_object = go.GazeboWindow(window, self.map_params)
+    def __addWindow(self, model):
+        gz_object = go.GazeboWindow(model, self.map_params)
 
         pos_str = gz_object.get_position_str()
         size_str = gz_object.get_size_str()
@@ -143,6 +148,28 @@ class WorldCreator:
         link = model_root[2]    # link.bot
         link.find("collision").find("geometry").find("box").find("size").text = size_str
         link.find("visual").find("geometry").find("box").find("size").text = size_str
+
+        self.SDF_ROOT.find("world").insert(0, model_root)
+
+    def __addQrCube(self, model):
+        gz_object = go.GazeboQrCube(model, self.map_params)
+
+        pos_str = gz_object.get_position_str()
+        size_str = None
+
+        self.__spawnQrCube(pos_str, size_str)
+
+    def __spawnQrCube(self, pos_str, size_str):
+        counter = self.qr_cube_counter
+        self.qr_cube_counter += 1
+        model_root = etree.parse(SAMPLE_QR_CUBE_PATH).getroot()
+        model_name = "qr_cube"
+
+        model_root.set("name", "{}_{}".format(model_name, counter))
+        model_root.find("pose").text = pos_str
+
+        link = model_root[1]
+        link.find("visual").find("material").find("script").find("name").text = 'QrCode{}'.format(counter)
 
         self.SDF_ROOT.find("world").insert(0, model_root)
 

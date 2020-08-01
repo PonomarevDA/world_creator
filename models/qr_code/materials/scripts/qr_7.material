@@ -1,0 +1,14 @@
+material QrCode7
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture ../textures/qr_7.png
+        # scale 0.5 0.5
+      }
+    }
+  }
+}

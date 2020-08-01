@@ -27,6 +27,7 @@ class ImagesPaths():
 
 TRAFFIC_LIGHT_IMG_PATH = 'models/traffic-light.png'
 CUBE_IMG_PATH = 'models/cube/image.png'
+QR_CUBE_IMG_PATH = 'models/qr_code/materials/textures/qr_0.png'
 
 def sign_path_to_sign_type(img_path):
     if img_path is ImagesPaths.STOP:
@@ -70,6 +71,7 @@ class ObjectType(Enum):
     DOOR = 16,
     WINDOW = 17,
     CUBE = 18,
+    QR_CUBE = 19,
 
 class CellQuarter(Enum):
     RIGHT_TOP = 0
@@ -364,6 +366,28 @@ class Box(Object):
     def deserialize(data: dict):
         return Box(Point2D.from_list(data['pos']))
 
+class QrCube(Object):
+    TYPE = ObjectType.QR_CUBE
+
+    def __init__(self, pos: Point2D):
+        self.pos = pos
+
+    def render(self, qp):
+        qp.drawImg(self.pos, QR_CUBE_IMG_PATH)
+
+    def serialized(self):
+        for name, _class in SERIALIZATION_SUPPORT.items():
+            if type(self) == _class:
+                break
+        data = {
+            'name': name,
+            'pos': self.pos.as_list()
+        }
+        return data
+
+    @staticmethod
+    def deserialize(data: dict):
+        return QrCube(Point2D.from_list(data['pos']))
 
 class Square(Object):
     TYPE = ObjectType.SQUARE
@@ -400,5 +424,6 @@ SERIALIZATION_SUPPORT = {
     'box': Box, 
     'traffic_light': TrafficLight,
     'cube': Cube,
+    'qr_cube': QrCube,
 }
     

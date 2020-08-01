@@ -25,6 +25,7 @@ class Mode(Enum):
     DOORS = int(5)
     WINDOWS = int(6)
     CUBES = int(7)
+    QR_CUBES = int(8)
 # ***************************** Main window *********************************
 
 class MyPainter(QPainter):
@@ -167,7 +168,8 @@ class Model:
             ObjectType.BOX: [],
             ObjectType.DOOR: [],
             ObjectType.WINDOW: [],
-            ObjectType.CUBE: []
+            ObjectType.CUBE: [],
+            ObjectType.QR_CUBE: [],
         }
         
         if load_filepath:
@@ -238,6 +240,7 @@ class MainWindow(QWidget):
             (ModeButton('6. Create traffic-lights', Mode.TRAFFIC_LIGHTS, self.model, self), GuiTrafficLightsMode(self.model)),
             (ModeButton('7. Create squares', Mode.SQUARES, self.model, self), GuiSquaresMode(self.model)),
             (ModeButton('8. Create cubes', Mode.CUBES, self.model, self), GuiCubesMode(self.model)),
+            (ModeButton('9. Create qr-cubes', Mode.QR_CUBES, self.model, self), GuiQrCubesMode(self.model)),
         ]        
         
         # Layout fill
@@ -434,6 +437,20 @@ class GuiCubesMode(BaseGuiMode):
             if obj.pos == map_cell:
                 print("Delete object: {}".format(obj))
                 self.model.objects[ObjectType.CUBE].remove(obj)
+
+class GuiQrCubesMode(BaseGuiMode):
+    def processLeftMousePressing(self, map_pos):
+        map_cell = Canvas.getCellClicked(map_pos)
+        model = QrCube(map_cell)
+        self.model.objects[ObjectType.QR_CUBE] += [model]
+        print("Add object: {}".format(model))
+
+    def processRightMousePressing(self, map_pos):
+        map_cell = Canvas.getCellClicked(map_pos)
+        for obj in self.model.objects[ObjectType.QR_CUBE]:
+            if obj.pos == map_cell:
+                print("Delete object: {}".format(obj))
+                self.model.objects[ObjectType.QR_CUBE].remove(obj)
 
 class GuiSignsMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):

@@ -1,0 +1,106 @@
+<model name='unit_box'>
+  <pose frame=''>1.48637 -2.48958 0.5 0 -0 0</pose>
+  <link name='top'>
+    <pose>0 0 0.3 0 0 0</pose>
+    <inertial>
+      <mass>1</mass>
+      <inertia>
+        <ixx>0</ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy>0</iyy>
+        <iyz>0</iyz>
+        <izz>0</izz>
+      </inertia>
+    </inertial>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.3 0.3 0.005</size>
+        </box>
+      </geometry>
+      <max_contacts>10</max_contacts>
+      <surface>
+        <contact>
+          <ode/>
+        </contact>
+        <bounce/>
+        <friction>
+          <torsional>
+            <ode/>
+          </torsional>
+          <ode/>
+        </friction>
+      </surface>
+    </collision>
+    <visual name='visual'>
+      <geometry>
+        <box>
+          <size>0.3 0.3 0.005</size>
+        </box>
+      </geometry>
+      <material>
+        <script>
+          <uri>model://qr_code/materials/scripts</uri>
+          <uri>model://qr_code/materials/textures</uri>
+          <name>QrCode0</name>
+        </script>
+      </material>
+    </visual>
+    <self_collide>0</self_collide>
+    <enable_wind>0</enable_wind>
+    <kinematic>0</kinematic>
+  </link>
+  <link name='bot'>
+    <pose>0 0 0.15 0 0 0</pose>
+    <inertial>
+      <mass>1</mass>
+      <inertia>
+        <ixx>0</ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy>0</iyy>
+        <iyz>0</iyz>
+        <izz>0</izz>
+      </inertia>
+    </inertial>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.3 0.3 0.3</size>
+        </box>
+      </geometry>
+      <max_contacts>10</max_contacts>
+      <surface>
+        <contact>
+          <ode/>
+        </contact>
+        <bounce/>
+        <friction>
+          <torsional>
+            <ode/>
+          </torsional>
+          <ode/>
+        </friction>
+      </surface>
+    </collision>
+    <visual name='visual'>
+      <geometry>
+        <box>
+          <size>0.3 0.3 0.3</size>
+        </box>
+      </geometry>
+      <material>
+        <script>
+          <name>Gazebo/White</name>
+          <uri>file://media/materials/scripts/gazebo.material</uri>
+        </script>
+      </material>
+    </visual>
+    <self_collide>0</self_collide>
+    <enable_wind>0</enable_wind>
+    <kinematic>0</kinematic>
+  </link>
+	<static>1</static>
+</model>
+
