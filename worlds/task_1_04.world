@@ -1,6 +1,6 @@
 <sdf version="1.6">
   <world name="default">
-    <include><uri>model://cube</uri><name>cube_4</name><pose>12.53125 2.46875 0 0 0 0</pose></include><include><uri>model://cube</uri><name>cube_3</name><pose>4.78125 14.96875 0 0 0 0</pose></include><include><uri>model://cube</uri><name>cube_2</name><pose>10.03125 14.96875 0 0 0 0</pose></include><include><uri>model://cube</uri><name>cube_1</name><pose>5.03125 5.21875 0 0 0 0</pose></include><include><uri>model://cube</uri><name>cube_0</name><pose>4.78125 4.96875 0 0 0 0</pose></include><model name="window_18">
+    <include><uri>model://rirpc_box</uri><name>cube_4</name><pose>12.53125 2.46875 0 0 0 0</pose></include><include><uri>model://rirpc_box</uri><name>cube_3</name><pose>4.78125 14.96875 0 0 0 0</pose></include><include><uri>model://rirpc_box</uri><name>cube_2</name><pose>10.03125 14.96875 0 0 0 0</pose></include><include><uri>model://rirpc_box</uri><name>cube_1</name><pose>5.03125 5.21875 0 0 0 0</pose></include><include><uri>model://rirpc_box</uri><name>cube_0</name><pose>4.78125 4.96875 0 0 0 0</pose></include><model name="window_18">
   <pose frame="">9.0 7.5 1.75 0 0 1.5707963267948966</pose>
   <link name="top">
     <pose>0 0 1.25 0 0 0</pose>
