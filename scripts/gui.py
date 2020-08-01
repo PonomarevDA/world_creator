@@ -232,15 +232,15 @@ class MainWindow(QWidget):
 
         # TODO - maybe must be not "model" but "controller" connected to buttons
         mode_buttons = [
-            (ModeButton('1. Create walls', Mode.WALLS, self.model, self), GuiWallsMode(self.model)),
-            (ModeButton('2. Create doors', Mode.DOORS, self.model, self), GuiDoorsMode(self.model)),
-            (ModeButton('3. Create windows', Mode.WINDOWS, self.model, self), GuiWindowsMode(self.model)),
-            (ModeButton('4. Create boxes', Mode.BOXES, self.model, self), GuiBoxesMode(self.model)),
-            (ModeButton('5. Create signs', Mode.SIGNS, self.model, self), GuiSignsMode(self.model)),
-            (ModeButton('6. Create traffic-lights', Mode.TRAFFIC_LIGHTS, self.model, self), GuiTrafficLightsMode(self.model)),
-            (ModeButton('7. Create squares', Mode.SQUARES, self.model, self), GuiSquaresMode(self.model)),
-            (ModeButton('8. Create cubes', Mode.CUBES, self.model, self), GuiCubesMode(self.model)),
-            (ModeButton('9. Create qr-cubes', Mode.QR_CUBES, self.model, self), GuiQrCubesMode(self.model)),
+            (ModeButton('1. Create walls', Mode.WALLS, self.model, self), GuiWallsMode(self.model, ObjectType.WALL)),
+            (ModeButton('2. Create doors', Mode.DOORS, self.model, self), GuiDoorsMode(self.model, ObjectType.DOOR)),
+            (ModeButton('3. Create windows', Mode.WINDOWS, self.model, self), GuiWindowsMode(self.model, ObjectType.WINDOW)),
+            (ModeButton('4. Create boxes', Mode.BOXES, self.model, self), GuiBoxesMode(self.model, ObjectType.BOX)),
+            (ModeButton('5. Create signs', Mode.SIGNS, self.model, self), GuiSignsMode(self.model, ObjectType.SIGN)),
+            (ModeButton('6. Create traffic-lights', Mode.TRAFFIC_LIGHTS, self.model, self), GuiTrafficLightsMode(self.model, ObjectType.TRAFFIC_LIGHT)),
+            (ModeButton('7. Create squares', Mode.SQUARES, self.model, self), GuiSquaresMode(self.model, ObjectType.SQUARE)),
+            (ModeButton('8. Create cubes', Mode.CUBES, self.model, self), GuiCubesMode(self.model, ObjectType.CUBE)),
+            (ModeButton('9. Create qr-cubes', Mode.QR_CUBES, self.model, self), GuiQrCubesMode(self.model, ObjectType.QR_CUBE)),
         ]        
         
         # Layout fill
@@ -288,8 +288,9 @@ class MainWindow(QWidget):
 class BaseGuiMode():
     """ @brief Interface for button features """
     REMOVE_LIMIT = 0.25
-    def __init__(self, model):
+    def __init__(self, model, object_type):
         self.model = model
+        self.object_type = object_type
 
     # map_pos - means position in cells (float), for ex. center of (1, 1) == map_pos(1.5, 1.5)
     def processRightMousePressing(self, map_pos):
@@ -305,50 +306,51 @@ class BaseGuiMode():
 class GuiBoxesMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
-
-        self.model.objects[ObjectType.BOX] += [Box(map_cell)]
+        model = Box(map_cell)
+        self.model.objects[self.object_type] += [model]
+        print("Add object: {}".format(model))
 
     def processRightMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
-
-        for obj in self.model.objects[ObjectType.BOX]:
+        for obj in self.model.objects[self.object_type]:
             if obj.pos == map_cell:
                 print("Delete object: {}".format(obj))
-                self.model.objects[ObjectType.BOX].remove(obj)
+                self.model.objects[self.object_type].remove(obj)
 
 
 class GuiSquaresMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
-
-        self.model.objects[ObjectType.SQUARE] += [Square(map_cell)]
+        model = Square(map_cell)
+        self.model.objects[self.object_type] += [model]
+        print("Add object: {}".format(model))
 
     def processRightMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
 
-        for square in self.model.objects[ObjectType.SQUARE]:
+        for square in self.model.objects[self.object_type]:
             if square.pos == map_cell:
                 print("Delete object: {}".format(square))
-                self.model.objects[ObjectType.SQUARE].remove(square)
+                self.model.objects[self.object_type].remove(square)
 
 
 class GuiWallsMode(BaseGuiMode):
-    def __init__(self, model):
-        super().__init__(model)
+    def __init__(self, model, object_type):
+        super().__init__(model, object_type)
         self._prev_clicked_cross = None
 
     def processRightMousePressing(self, map_pos):
         self._prev_clicked_cross = None
         filtered_walls = it.filterfalse(lambda x: x.distance_2_point(map_pos) < BaseGuiMode.REMOVE_LIMIT,
-                                        [wall for wall in self.model.objects[ObjectType.WALL]])
-        self.model.objects[ObjectType.WALL] = list(filtered_walls)
+                                        [wall for wall in self.model.objects[self.object_type]])
+        self.model.objects[self.object_type] = list(filtered_walls)
 
     def processLeftMousePressing(self, map_pos):
         map_cross = Canvas.getCrossClicked(map_pos)
         
         if self._prev_clicked_cross is not None and \
            self._prev_clicked_cross != map_cross:
-            self.model.objects[ObjectType.WALL] += [Wall(map_cross, self._prev_clicked_cross)]
+            self.model.objects[self.object_type] += [Wall(map_cross, self._prev_clicked_cross)]
             # self._prev_clicked_cross = None
         # else:
         self._prev_clicked_cross = map_cross
@@ -358,22 +360,22 @@ class GuiWallsMode(BaseGuiMode):
     
 
 class GuiDoorsMode(BaseGuiMode):
-    def __init__(self, model):
-        super().__init__(model)
+    def __init__(self, model, object_type):
+        super().__init__(model, object_type)
         self._prev_clicked_cross = None
 
     def processRightMousePressing(self, map_pos):
         self._prev_clicked_cross = None
         filtered_doors = it.filterfalse(lambda x: x.distance_2_point(map_pos) < BaseGuiMode.REMOVE_LIMIT,
-                                        [door for door in self.model.objects[ObjectType.DOOR]])
-        self.model.objects[ObjectType.DOOR] = list(filtered_doors)
+                                        [door for door in self.model.objects[self.object_type]])
+        self.model.objects[self.object_type] = list(filtered_doors)
 
     def processLeftMousePressing(self, map_pos):
         map_cross = Canvas.getCrossClicked(map_pos)
         
         if self._prev_clicked_cross is not None and \
            self._prev_clicked_cross != map_cross:
-            self.model.objects[ObjectType.DOOR] += [Door(map_cross, self._prev_clicked_cross)]
+            self.model.objects[self.object_type] += [Door(map_cross, self._prev_clicked_cross)]
             # self._prev_clicked_cross = None
         # else:
         self._prev_clicked_cross = map_cross
@@ -382,22 +384,22 @@ class GuiDoorsMode(BaseGuiMode):
         self._prev_clicked_cross = None
 
 class GuiWindowsMode(BaseGuiMode):
-    def __init__(self, model):
-        super().__init__(model)
+    def __init__(self, model, object_type):
+        super().__init__(model, object_type)
         self._prev_clicked_cross = None
 
     def processRightMousePressing(self, map_pos):
         self._prev_clicked_cross = None
         filtered_windows = it.filterfalse(lambda x: x.distance_2_point(map_pos) < BaseGuiMode.REMOVE_LIMIT,
-                                        [window for window in self.model.objects[ObjectType.WINDOW]])
-        self.model.objects[ObjectType.WINDOW] = list(filtered_windows)
+                                        [window for window in self.model.objects[self.object_type]])
+        self.model.objects[self.object_type] = list(filtered_windows)
 
     def processLeftMousePressing(self, map_pos):
         map_cross = Canvas.getCrossClicked(map_pos)
         
         if self._prev_clicked_cross is not None and \
            self._prev_clicked_cross != map_cross:
-            self.model.objects[ObjectType.WINDOW] += [Window(map_cross, self._prev_clicked_cross)]
+            self.model.objects[self.object_type] += [Window(map_cross, self._prev_clicked_cross)]
             # self._prev_clicked_cross = None
         # else:
         self._prev_clicked_cross = map_cross
@@ -411,7 +413,7 @@ class GuiTrafficLightsMode(BaseGuiMode):
         orient = Canvas.getCellQuarter(map_pos)
         
         model = TrafficLight(map_cell, orient)
-        self.model.objects[ObjectType.TRAFFIC_LIGHT] += [model]
+        self.model.objects[self.object_type] += [model]
 
         print("Add object: {}".format(model))
         
@@ -419,38 +421,38 @@ class GuiTrafficLightsMode(BaseGuiMode):
         map_cell = Canvas.getCellClicked(map_pos)
         orient = Canvas.getCellQuarter(map_pos)
 
-        for tl in self.model.objects[ObjectType.TRAFFIC_LIGHT]:
+        for tl in self.model.objects[self.object_type]:
             if tl.pos == map_cell and tl.orient == orient:
                 log.debug("Delete object {}".format(tl))
-                self.model.objects[ObjectType.TRAFFIC_LIGHT].remove(tl)
+                self.model.objects[self.object_type].remove(tl)
 
 class GuiCubesMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
         model = Cube(map_cell)
-        self.model.objects[ObjectType.CUBE] += [model]
+        self.model.objects[self.object_type] += [model]
         print("Add object: {}".format(model))
 
     def processRightMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
-        for obj in self.model.objects[ObjectType.CUBE]:
+        for obj in self.model.objects[self.object_type]:
             if obj.pos == map_cell:
                 print("Delete object: {}".format(obj))
-                self.model.objects[ObjectType.CUBE].remove(obj)
+                self.model.objects[self.object_type].remove(obj)
 
 class GuiQrCubesMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
         model = QrCube(map_cell)
-        self.model.objects[ObjectType.QR_CUBE] += [model]
+        self.model.objects[self.object_type] += [model]
         print("Add object: {}".format(model))
 
     def processRightMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
-        for obj in self.model.objects[ObjectType.QR_CUBE]:
+        for obj in self.model.objects[self.object_type]:
             if obj.pos == map_cell:
                 print("Delete object: {}".format(obj))
-                self.model.objects[ObjectType.QR_CUBE].remove(obj)
+                self.model.objects[self.object_type].remove(obj)
 
 class GuiSignsMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
@@ -483,13 +485,13 @@ class GuiSignsMode(BaseGuiMode):
         sign_type = sign_path_to_sign_type(signImg)
         
         print("Add object: sign ({2}) with pose {0}/{1}.".format(pos, orient.name, sign_type))
-        self.model.objects[ObjectType.SIGN] += [Sign(pos, orient, sign_type)]
+        self.model.objects[self.object_type] += [Sign(pos, orient, sign_type)]
     
     def deleteSign(self, pos, orient):
-        for sign in self.model.objects[ObjectType.SIGN]:
+        for sign in self.model.objects[self.object_type]:
             if sign.pos == pos and sign.orient == orient:
                 print("Delete object: sign ({2}) with pose {0}/{1}".format(pos, orient.name, sign.type))
-                self.model.objects[ObjectType.SIGN].remove(sign)
+                self.model.objects[self.object_type].remove(sign)
 
 
 class SignSelectButton(QPushButton):
