@@ -2,7 +2,7 @@
 <sdf version="1.6">
 	<model name="tl">
 		<link name="leg">
-			<pose>0 0 0.35 0 0 0</pose>
+			<pose>0 0 0.425 0 0 0</pose>
 			<inertial>
 				<mass>0.00693617</mass>
 				<inertia>
@@ -19,7 +19,7 @@
 				<geometry>
 					<cylinder>
 						<radius>0.01</radius>
-						<length>0.7</length>
+						<length>0.85</length>
 					</cylinder>
 				</geometry>
 				<material>Gazebo/Grey</material>
@@ -28,13 +28,13 @@
 				<geometry>
 					<cylinder>
 						<radius>0.01</radius>
-						<length>0.7</length>
+						<length>0.85</length>
 					</cylinder>
 				</geometry>
 			</collision>
 		</link>
 		<link name="head">
-			<pose>0 0 0.7 0 0 0</pose>
+			<pose>0 0 0.85 0 0 0</pose>
 			<inertial>
 				<mass>0.00693617</mass>
 				<inertia>
@@ -77,7 +77,7 @@
 			</collision>
 		</link>
 		<link name="topSphere">
-			<pose>0 -0.09 0.775 0 0 0</pose>
+			<pose>0 -0.09 0.925 0 0 0</pose>
 			<inertial>
 				<mass>0.00693617</mass>
 				<inertia>
@@ -113,7 +113,7 @@
 			</collision>
 		</link>
 		<link name="bottomSphere">
-			<pose>0 -0.09 0.625 0 0 0</pose>
+			<pose>0 -0.09 0.775 0 0 0</pose>
 			<inertial>
 				<mass>0.00693617</mass>
 				<inertia>
