@@ -150,12 +150,12 @@ class Wall():
         for name, _class in SERIALIZATION_SUPPORT.items():
             if type(self) == _class:
                 break
-        
+
         data = {
             'name': name,
             'pnts': self.p1.as_list() + self.p2.as_list()
         }
-        
+
         return data
 
     @staticmethod
@@ -272,16 +272,16 @@ class Sign(Object):
         for name, _class in SERIALIZATION_SUPPORT.items():
             if type(self) == _class:
                 break
-        
+
         data = {
             'name': name,
             'pos': self.pos.as_list(),
             'orient': self.orient.value,
             'type': self.type
         }
-        
-        return data        
-    
+
+        return data
+
     @staticmethod
     def deserialize(data: dict):
         return Sign(Point2D.from_list(data['pos']), 
@@ -313,7 +313,7 @@ class TrafficLight(Object):
             'orient': self.orient.value,
         }
         
-        return data        
+        return data
     
     @staticmethod
     def deserialize(data: dict):
@@ -323,25 +323,33 @@ class TrafficLight(Object):
 class Cube(Object):
     TYPE = ObjectType.CUBE
     
-    def __init__(self, pos):
+    def __init__(self, pos, orient):
         self.pos = pos
+        self.orient = orient
     
+    def __str__(self):
+        return "[({}) pose = {}, orient = {}]".format(type(self), self.pos, self.orient)
+
     def render(self, qp):
-        qp.drawImg(self.pos, CUBE_IMG_PATH)
-    
+        qp.drawQuarterImg(self.pos, self.orient, CUBE_IMG_PATH)
+
     def serialized(self):
         for name, _class in SERIALIZATION_SUPPORT.items():
             if type(self) == _class:
                 break
+
         data = {
             'name': name,
             'pos': self.pos.as_list(),
+            'orient': self.orient.value,
         }
-        return data        
+
+        return data
     
     @staticmethod
     def deserialize(data: dict):
-        return Cube(Point2D.from_list(data['pos']))
+        return Cube(Point2D.from_list(data['pos']),
+                    CellQuarter(data['orient']))
     
 class Box(Object):
     TYPE = ObjectType.BOX

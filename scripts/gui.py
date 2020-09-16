@@ -84,6 +84,9 @@ class Canvas(QWidget):
                 [obj.render(qp) for obj in objs] 
             else:
                 objs.render(qp)
+        for obj_type, objs in self.model.objects.items():
+            if obj_type is obj_type.SIGN or obj_type is obj_type.TRAFFIC_LIGHT:
+                [obj.render(qp) for obj in objs]
                 
     def get_map_positions(self, canvas_click, cell_sz):
         return Point2D(canvas_click.x / cell_sz.x, canvas_click.y / cell_sz.y)
@@ -429,7 +432,9 @@ class GuiTrafficLightsMode(BaseGuiMode):
 class GuiCubesMode(BaseGuiMode):
     def processLeftMousePressing(self, map_pos):
         map_cell = Canvas.getCellClicked(map_pos)
-        model = Cube(map_cell)
+        orient = Canvas.getCellQuarter(map_pos)
+
+        model = Cube(map_cell, orient)
         self.model.objects[self.object_type] += [model]
         print("Add object: {}".format(model))
 

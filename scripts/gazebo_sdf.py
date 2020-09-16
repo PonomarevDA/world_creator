@@ -15,7 +15,7 @@ SAMPLE_LINE_PATH = "models/line.sdf"
 SAMPLE_QR_CUBE_PATH = "models/qr_cube.sdf"
 
 TRAFFIC_LIGHT_PATH = "model://traffic-light"
-CUBE_PATH = "model://rirpc_box"
+CUBE_PATH = "model://cube"
 
 EMPTY_WORLD_PATH = "models/empty_world.world"
 
