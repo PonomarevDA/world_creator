@@ -25,11 +25,10 @@
           </box>
         </geometry>
         <material>
-	     <script>
-                  <uri>model://rirpc_box/materials/scripts</uri>
-                  <uri>model://rirpc_box/materials/textures</uri>
-                  <name>RirpcLogo0</name>
-              </script>
+	        <script>
+            <name>Gazebo/White</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
         </material>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <transparency>0</transparency>
