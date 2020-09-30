@@ -18,16 +18,21 @@
 			<visual name="visual">
 				<geometry>
 					<cylinder>
-						<radius>0.01</radius>
+						<radius>0.03</radius>
 						<length>0.85</length>
 					</cylinder>
 				</geometry>
-				<material>Gazebo/Grey</material>
+				<material>
+					<script>
+						<uri>file://media/materials/scripts/gazebo.material</uri>
+						<name>Gazebo/Black</name>
+					</script>
+				</material>
 			</visual>
 			<collision name="collision">
 				<geometry>
 					<cylinder>
-						<radius>0.01</radius>
+						<radius>0.03</radius>
 						<length>0.85</length>
 					</cylinder>
 				</geometry>
@@ -60,7 +65,7 @@
 				<material>
 					<script>
 						<uri>file://media/materials/scripts/gazebo.material</uri>
-						<name>Gazebo/Grey</name>
+						<name>Gazebo/Black</name>
 					</script>
 				</material>
 			</visual>
@@ -77,7 +82,7 @@
 			</collision>
 		</link>
 		<link name="topSphere">
-			<pose>0 -0.09 0.925 0 0 0</pose>
+			<pose>0 -0.09 0.925 1.57 1.57 0</pose>
 			<inertial>
 				<mass>0.00693617</mass>
 				<inertia>
@@ -92,9 +97,10 @@
 			<enable_wind>0</enable_wind>
 			<visual name="visual">
 				<geometry>
-					<sphere>
-						<radius>0.06</radius>
-					</sphere>
+					<cylinder>
+						<radius>0.065</radius>
+						<length>0.03</length>
+					</cylinder>
 				</geometry>
 					<material>
 						<script>
@@ -106,14 +112,15 @@
 			</visual>
 			<collision name="collision">
 				<geometry>
-					<sphere>
-						<radius>0.05</radius>
-					</sphere>
+					<cylinder>
+						<radius>0.065</radius>
+						<length>0.03</length>
+					</cylinder>
 				</geometry>
 			</collision>
 		</link>
 		<link name="bottomSphere">
-			<pose>0 -0.09 0.775 0 0 0</pose>
+			<pose>0 -0.09 0.775 1.57 1.57 0</pose>
 			<inertial>
 				<mass>0.00693617</mass>
 				<inertia>
@@ -128,9 +135,10 @@
 			<enable_wind>0</enable_wind>
 			<visual name="visual">
 				<geometry>
-					<sphere>
-						<radius>0.06</radius>
-					</sphere>
+					<cylinder>
+						<radius>0.065</radius>
+						<length>0.03</length>
+					</cylinder>
 				</geometry>
 				<material>
 					<script>
@@ -142,9 +150,10 @@
 			</visual>
 			<collision name="collision">
 				<geometry>
-					<sphere>
-						<radius>0.05</radius>
-					</sphere>
+					<cylinder>
+						<radius>0.065</radius>
+						<length>0.03</length>
+					</cylinder>
 				</geometry>
 			</collision>
 		</link>
