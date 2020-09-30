@@ -191,13 +191,13 @@ class GazeboSign(GazeboObject):
 
         # Apply small shift
         if self.base.orient == objects.CellQuarter.RIGHT_TOP:
-            pos += ds.Point2D(0.9, 0.1)
+            pos += ds.Point2D(0.93, 0.03)
         elif self.base.orient == objects.CellQuarter.RIGHT_BOT:
-            pos += ds.Point2D(0.9, 0.9)
+            pos += ds.Point2D(0.97, 0.93)
         elif self.base.orient == objects.CellQuarter.LEFT_BOT:
-            pos += ds.Point2D(0.1, 0.9)
+            pos += ds.Point2D(0.07, 0.97)
         elif self.base.orient == objects.CellQuarter.LEFT_TOP:
-            pos += ds.Point2D(0.1, 0.1)
+            pos += ds.Point2D(0.03, 0.07)
 
         self._swap_axes(pos)
         self._turn_to_physical(pos)
@@ -223,13 +223,13 @@ class GazeboTrafficLight(GazeboObject):
 
         # Apply small shift
         if self.base.orient == objects.CellQuarter.RIGHT_TOP:
-            pos += ds.Point2D(0.9, 0.1)
+            pos += ds.Point2D(0.93, 0.03)
         elif self.base.orient == objects.CellQuarter.RIGHT_BOT:
-            pos += ds.Point2D(0.9, 0.9)
+            pos += ds.Point2D(0.97, 0.93)
         elif self.base.orient == objects.CellQuarter.LEFT_BOT:
-            pos += ds.Point2D(0.1, 0.9)
+            pos += ds.Point2D(0.07, 0.97)
         elif self.base.orient == objects.CellQuarter.LEFT_TOP:
-            pos += ds.Point2D(0.1, 0.1)
+            pos += ds.Point2D(0.03, 0.07)
 
         return pos
 
@@ -248,13 +248,13 @@ class GazeboTrafficLight(GazeboObject):
 
         # Shift relative to real position
         if self.base.orient == objects.CellQuarter.RIGHT_TOP:
-            pos += ds.Point2D(0, -0.6)
+            pos += ds.Point2D(0, -0.53)
         elif self.base.orient == objects.CellQuarter.RIGHT_BOT:
-            pos += ds.Point2D(0.6, 0)
+            pos += ds.Point2D(0.53, 0)
         elif self.base.orient == objects.CellQuarter.LEFT_BOT:
-            pos += ds.Point2D(0, 0.6)
+            pos += ds.Point2D(0, 0.53)
         elif self.base.orient == objects.CellQuarter.LEFT_TOP:
-            pos += ds.Point2D(-0.6, 0)
+            pos += ds.Point2D(-0.53, 0)
 
         self._swap_axes(pos)
         self._turn_to_physical(pos)
