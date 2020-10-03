@@ -81,17 +81,28 @@ class CellQuarter(Enum):
 
 
 class MapParams:
-    def __init__(self, n_cells: Size2D, cell_sz: Size2D):
+    def __init__(self, n_cells: Size2D, cell_sz: Size2D, height,
+                 scene, wall_texture, ground_texture):
         self.n_cells = n_cells
         self.cell_sz = cell_sz
         self.phys_size = Size2D(self.n_cells.x * self.cell_sz.x, 
                                 self.n_cells.y * self.cell_sz.y)
-        print("World cells: count={0},size={1}".format(self.n_cells, self.cell_sz))
+        self.height = height
+        self.scene = scene
+        self.wall_texture = wall_texture
+        self.ground_texture = ground_texture
+        print("World cells: count={0}, size={1}, height={2}, scene={3}, wall={4}, ground={5}"\
+              .format(self.n_cells, self.cell_sz, self.height,
+              self.scene, self.wall_texture, self.ground_texture))
 
     def serialize(self):
         data = {
             'cell_cnt': self.n_cells.as_list(),
-            'cell_sz': self.cell_sz.as_list()
+            'cell_sz': self.cell_sz.as_list(),
+            'height': self.height,
+            'scene': self.scene,
+            'wall_texture': self.wall_texture,
+            'ground_texture': self.ground_texture
         }
         
         return data
@@ -101,7 +112,19 @@ class MapParams:
     
     @staticmethod
     def deserialize(data: dict):
-        return MapParams(Point2D.from_list(data['cell_cnt']), Point2D.from_list(data['cell_sz']))
+        height = data['height'] if 'height' in data else 0.5
+        scene = data['scene'] if 'scene' in data else 'default'
+        wall_texture = data['wall_texture'] if 'wall_texture' in data else 'orange'
+        ground_texture = data['ground_texture'] if 'ground_texture' in data else 'default'
+        print('deserialize', scene, wall_texture)
+
+
+        return MapParams(Point2D.from_list(data['cell_cnt']),
+                         Point2D.from_list(data['cell_sz']),
+                         height,
+                         scene,
+                         wall_texture,
+                         ground_texture)
 
         
 class Object:

@@ -42,9 +42,8 @@ class WorldCreator:
         """
         @brief Constructor that create empty world with defined config
         """
-        self.__create_empty_world()
-
         self.map_params = map_params
+        self.__create_empty_world()
 
     def showTree(self):
         """
@@ -122,6 +121,13 @@ class WorldCreator:
         link = model_root.find("link")
         link.find("collision").find("geometry").find("box").find("size").text = size_str
         link.find("visual").find("geometry").find("box").find("size").text = size_str
+
+        allowed_textures = ['Orange', 'White', 'Grey', 'Wood', 'WoodPallet', 'WoodFloor']
+        if self.map_params.wall_texture in allowed_textures:
+            texture = self.map_params.wall_texture
+        else:
+            texture = 'Orange'
+        link.find("visual").find("material").find("script").find("name").text = 'Gazebo/' + texture
         self.SDF_ROOT.find("world").insert(0, model_root)
 
     def __addWindow(self, model):
@@ -287,3 +293,16 @@ class WorldCreator:
         """
         self.SDF_ROOT = etree.parse(EMPTY_WORLD_PATH).getroot()
 
+        if self.map_params.scene == 'sky':
+            speed_elem = etree.Element("speed")
+            speed_elem.text = '12'
+
+            clouds_elem = etree.Element("clouds")
+            clouds_elem.append(speed_elem)
+
+            model_root = etree.Element("sky")
+            model_root.append(clouds_elem)
+
+            self.SDF_ROOT.find("world").find('scene').insert(0, model_root)
+        else:
+            pass
