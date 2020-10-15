@@ -1,0 +1,501 @@
+{
+  "version": 1.0,
+  "map_params": {
+    "cell_cnt": [
+      10,
+      9
+    ],
+    "cell_sz": [
+      2.0,
+      2.0
+    ],
+    "height": 0.5,
+    "scene": "sky",
+    "wall_texture": "Wood",
+    "ground_texture": "default"
+  },
+  "objects": [
+    {
+      "name": "traffic_light",
+      "pos": [
+        8,
+        7
+      ],
+      "orient": 3
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        0,
+        9,
+        0,
+        2
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        10,
+        9,
+        0,
+        9
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        10,
+        3,
+        10,
+        9
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        7,
+        3,
+        10,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        2,
+        7,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        3,
+        2,
+        6,
+        2
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        8,
+        7,
+        10,
+        7
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        8,
+        6,
+        8,
+        7
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        6,
+        8,
+        6
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        8,
+        6,
+        6
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        9,
+        8,
+        6,
+        8
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        9,
+        6,
+        9,
+        8
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        10,
+        6,
+        9,
+        6
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        5,
+        6,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        8,
+        5,
+        6,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        8,
+        4,
+        8,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        4,
+        8,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        9,
+        4,
+        10,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        9,
+        5,
+        9,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        10,
+        5,
+        9,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        5,
+        5,
+        5,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        4,
+        5,
+        5,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        4,
+        4,
+        4,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        5,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        3,
+        5,
+        0,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        3,
+        4,
+        3,
+        5
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        0,
+        4,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        1,
+        6,
+        0,
+        6
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        1,
+        8,
+        1,
+        6
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        0,
+        8,
+        1,
+        8
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        2,
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        1,
+        3,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        1,
+        2,
+        1,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        3,
+        3,
+        3,
+        2
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        4,
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        4,
+        2,
+        4,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        5,
+        3,
+        5,
+        2
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        3,
+        5,
+        3
+      ]
+    },
+    {
+      "name": "wall",
+      "pnts": [
+        6,
+        2,
+        6,
+        3
+      ]
+    },
+    {
+      "name": "sign",
+      "pos": [
+        6,
+        7
+      ],
+      "orient": 3,
+      "type": "only right sign"
+    },
+    {
+      "name": "sign",
+      "pos": [
+        6,
+        6
+      ],
+      "orient": 2,
+      "type": "only right sign"
+    },
+    {
+      "name": "sign",
+      "pos": [
+        5,
+        2
+      ],
+      "orient": 3,
+      "type": "stop sign"
+    },
+    {
+      "name": "sign",
+      "pos": [
+        7,
+        6
+      ],
+      "orient": 0,
+      "type": "only left sign"
+    },
+    {
+      "name": "sign",
+      "pos": [
+        4,
+        4
+      ],
+      "orient": 1,
+      "type": "forward or right sign"
+    },
+    {
+      "name": "sign",
+      "pos": [
+        4,
+        4
+      ],
+      "orient": 2,
+      "type": "forward or left sign"
+    },
+    {
+      "name": "square",
+      "pos": [
+        2,
+        6
+      ]
+    },
+    {
+      "name": "square",
+      "pos": [
+        2,
+        7
+      ]
+    },
+    {
+      "name": "square",
+      "pos": [
+        4,
+        6
+      ]
+    },
+    {
+      "name": "square",
+      "pos": [
+        4,
+        7
+      ]
+    },
+    {
+      "name": "cube",
+      "pos": [
+        3,
+        0
+      ],
+      "orient": 0
+    },
+    {
+      "name": "cube",
+      "pos": [
+        4,
+        0
+      ],
+      "orient": 0
+    },
+    {
+      "name": "cube",
+      "pos": [
+        5,
+        0
+      ],
+      "orient": 0
+    },
+    {
+      "name": "cube",
+      "pos": [
+        6,
+        0
+      ],
+      "orient": 0
+    }
+  ]
+}
