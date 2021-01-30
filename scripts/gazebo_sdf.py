@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
+from enum import Enum
 import logging as log
 from lxml import etree
-import copy
-import math as m
-from enum import Enum
-import converter
-from objects import *
+from objects import SignsTypes, ObjectType, MapParams, Object
 import gazebo_objects as go
 
 # Files pathes

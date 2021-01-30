@@ -5,8 +5,11 @@ This sript creates gui that allow to create json and sdf files.
 """
 
 import argparse
+import sys
 
-from gui import *
+from PyQt5.QtWidgets import QApplication
+from objects import MapParams
+from gui import MainWindow
 from data_structures import Size2D
 
 if __name__=="__main__":
@@ -56,4 +59,3 @@ if __name__=="__main__":
     map_params = MapParams(cells_amount, cells_size, height, scene, wall_texture, ground_texture)
     window = MainWindow(load_filepath, basename_prefix, map_params)
     app.exec_()
-

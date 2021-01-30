@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import sys, random
-from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QGridLayout, \
+import sys
+import random
+from PyQt5.QtWidgets import QWidget, QPushButton, QGridLayout, \
     QLabel, QDialog, QStatusBar, QMainWindow, QButtonGroup
 from PyQt5.QtGui import QPainter, QColor, QPen, QBrush, QIcon, QImage
 from PyQt5.QtCore import Qt, QSize
@@ -9,7 +10,9 @@ import logging as log
 import itertools as it
 
 import converter
-from objects import *
+from data_structures import Point2D, Size2D
+from objects import ImagesPaths, sign_path_to_sign_type, ObjectType, CellQuarter, Wall, \
+                    Door, Window, Sign, TrafficLight, Cube, Box, QrCube, Square
 
 log.basicConfig(filename='world_creator.log', level=log.DEBUG)
 log.getLogger().addHandler(log.StreamHandler(sys.stdout))
