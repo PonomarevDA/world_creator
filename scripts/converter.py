@@ -7,7 +7,7 @@ This script allow to create json file from data and sdf file from json.
 import json
 import logging as log
 import gazebo_sdf as gzs
-from objects import MapParams, APP_VERSION
+from objects import Object, ObjectType, MapParams, APP_VERSION
 
 # Cheet sheet
 """

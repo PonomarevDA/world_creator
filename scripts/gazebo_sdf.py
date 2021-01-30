@@ -51,10 +51,10 @@ class WorldCreator:
             ObjectType.WALL: self.__add_wall,
             ObjectType.DOOR: self.__add_door,
             ObjectType.WINDOW: self.__add_window,
-            ObjectType.SIGN: self.__add_sign,
             ObjectType.BOX: self.__add_box,
-            ObjectType.SQUARE: self.__add_square,
+            ObjectType.SIGN: self.__add_sign,
             ObjectType.TRAFFIC_LIGHT: self.__add_traffic_light,
+            ObjectType.SQUARE: self.__add_square,
             ObjectType.CUBE: self.__add_cube,
             ObjectType.QR_CUBE: self.__add_qr_cube,
         }
@@ -81,43 +81,6 @@ class WorldCreator:
 
         self.__spawn_box(pos_str, size_str)
 
-    def __add_box(self, box):
-        gz_object = go.GazeboBox(box, self.map_params)
-
-        pos_str = gz_object.get_position_str()
-        size_str = gz_object.get_size_str()
-
-        self.__spawn_box(pos_str, size_str)
-
-    def __add_square(self, square):
-        gz_object = go.GazeboSquare(square, self.map_params)
-
-        size_str = gz_object.get_size_str()
-        pos_strs = gz_object.get_position_str()
-
-        for pos_str in pos_strs:
-            self.__spawn_box(pos_str, size_str)
-
-    def __spawn_box(self, pos_str, size_str):
-        self.box_counter += 1
-        counter = self.box_counter
-        model_root = etree.parse(SAMPLE_BOX_PATH).getroot()
-        model_name = "box"
-
-        model_root.set("name", "{}_{}".format(model_name, counter))
-        model_root.find("pose").text = pos_str
-        link = model_root.find("link")
-        link.find("collision").find("geometry").find("box").find("size").text = size_str
-        link.find("visual").find("geometry").find("box").find("size").text = size_str
-
-        allowed_textures = ['Orange', 'White', 'Grey', 'Wood', 'WoodPallet', 'WoodFloor']
-        if self.map_params.wall_texture in allowed_textures:
-            texture = self.map_params.wall_texture
-        else:
-            texture = 'Orange'
-        link.find("visual").find("material").find("script").find("name").text = 'Gazebo/' + texture
-        self.SDF_ROOT.find("world").insert(0, model_root)
-
     def __add_window(self, model):
         gz_object = go.GazeboWindow(model, self.map_params)
 
@@ -126,46 +89,13 @@ class WorldCreator:
 
         self.__spawn_window(pos_str, size_str)
 
-    def __spawn_window(self, pos_str, size_str):
-        self.window_counter += 1
-        counter = self.window_counter
-        model_root = etree.parse(SAMPLE_WINDOW_PATH).getroot()
-        model_name = "window"
-
-        model_root.set("name", "{}_{}".format(model_name, counter))
-        model_root.find("pose").text = pos_str
-
-        link = model_root[1]    # link.top
-        link.find("collision").find("geometry").find("box").find("size").text = size_str
-        link.find("visual").find("geometry").find("box").find("size").text = size_str
-
-        link = model_root[2]    # link.bot
-        link.find("collision").find("geometry").find("box").find("size").text = size_str
-        link.find("visual").find("geometry").find("box").find("size").text = size_str
-
-        self.SDF_ROOT.find("world").insert(0, model_root)
-
-    def __add_qr_cube(self, model):
-        gz_object = go.GazeboQrCube(model, self.map_params)
+    def __add_box(self, box):
+        gz_object = go.GazeboBox(box, self.map_params)
 
         pos_str = gz_object.get_position_str()
-        size_str = None
+        size_str = gz_object.get_size_str()
 
-        self.__spawn_qr_cube(pos_str, size_str)
-
-    def __spawn_qr_cube(self, pos_str, size_str):
-        counter = self.qr_cube_counter
-        self.qr_cube_counter += 1
-        model_root = etree.parse(SAMPLE_QR_CUBE_PATH).getroot()
-        model_name = "qr_cube"
-
-        model_root.set("name", "{}_{}".format(model_name, counter))
-        model_root.find("pose").text = pos_str
-
-        link = model_root[1]
-        link.find("visual").find("material").find("script").find("name").text = 'QrCode{}'.format(counter)
-
-        self.SDF_ROOT.find("world").insert(0, model_root)
+        self.__spawn_box(pos_str, size_str)
 
     def __add_sign(self, sign):
         gz_object = go.GazeboSign(sign, self.map_params)
@@ -188,6 +118,77 @@ class WorldCreator:
 
         self.__spawn_sign(pos_str, SIGN_MODEL_MAP[_type])
 
+    def __add_traffic_light(self, trafficLight):
+        go_traf_light = go.GazeboTrafficLight(trafficLight, self.map_params)
+        pos_str = go_traf_light.get_position_str()
+        self.__spawn_traffic_light(pos_str)
+
+        line_pos_str = go_traf_light.get_line_position_str()
+        line_size_str = go_traf_light.get_line_size_str()
+        self.__spawn_traffic_light_line(line_pos_str, line_size_str)
+
+    def __add_square(self, square):
+        gz_object = go.GazeboSquare(square, self.map_params)
+
+        size_str = gz_object.get_size_str()
+        pos_strs = gz_object.get_position_str()
+
+        for pos_str in pos_strs:
+            self.__spawn_box(pos_str, size_str)
+
+    def __add_cube(self, model):
+        gazebo_object = go.GazeboCube(model, self.map_params)
+        pos_str = gazebo_object.get_position_str()
+        self.__spawn_cube(pos_str)
+
+    def __add_qr_cube(self, model):
+        gz_object = go.GazeboQrCube(model, self.map_params)
+
+        pos_str = gz_object.get_position_str()
+        size_str = None
+
+        self.__spawn_qr_cube(pos_str, size_str)
+
+    def __spawn_box(self, pos_str, size_str):
+        self.box_counter += 1
+        counter = self.box_counter
+        model_root = etree.parse(SAMPLE_BOX_PATH).getroot()
+        model_name = "box"
+
+        model_root.set("name", "{}_{}".format(model_name, counter))
+        model_root.find("pose").text = pos_str
+        link = model_root.find("link")
+        link.find("collision").find("geometry").find("box").find("size").text = size_str
+        link.find("visual").find("geometry").find("box").find("size").text = size_str
+
+        allowed_textures = ['Orange', 'White', 'Grey', 'Wood', 'WoodPallet', 'WoodFloor']
+        if self.map_params.wall_texture in allowed_textures:
+            texture = self.map_params.wall_texture
+        else:
+            texture = 'Orange'
+        link.find("visual").find("material").find("script").find("name").text = 'Gazebo/' + texture
+        self.SDF_ROOT.find("world").insert(0, model_root)
+
+
+    def __spawn_window(self, pos_str, size_str):
+        self.window_counter += 1
+        counter = self.window_counter
+        model_root = etree.parse(SAMPLE_WINDOW_PATH).getroot()
+        model_name = "window"
+
+        model_root.set("name", "{}_{}".format(model_name, counter))
+        model_root.find("pose").text = pos_str
+
+        link = model_root[1]    # link.top
+        link.find("collision").find("geometry").find("box").find("size").text = size_str
+        link.find("visual").find("geometry").find("box").find("size").text = size_str
+
+        link = model_root[2]    # link.bot
+        link.find("collision").find("geometry").find("box").find("size").text = size_str
+        link.find("visual").find("geometry").find("box").find("size").text = size_str
+
+        self.SDF_ROOT.find("world").insert(0, model_root)
+
     def __spawn_sign(self, pos_str, _model_path):
         ### LEFT/RIGHT_BOT/TOP - in terms of rendered map
         model_path = _model_path.value
@@ -208,15 +209,6 @@ class WorldCreator:
         self.SDF_ROOT.find("world").insert(0, model_root)
 
         self.sign_counter += 1
-
-    def __add_traffic_light(self, trafficLight):
-        go_traf_light = go.GazeboTrafficLight(trafficLight, self.map_params)
-        pos_str = go_traf_light.get_position_str()
-        self.__spawn_traffic_light(pos_str)
-
-        line_pos_str = go_traf_light.get_line_position_str()
-        line_size_str = go_traf_light.get_line_size_str()
-        self.__spawn_traffic_light_line(line_pos_str, line_size_str)
 
     def __spawn_traffic_light(self, pos_str):
         model_path = TRAFFIC_LIGHT_PATH
@@ -250,11 +242,6 @@ class WorldCreator:
 
         self.SDF_ROOT.find("world").insert(0, model_root)
 
-    def __add_cube(self, model):
-        gazebo_object = go.GazeboCube(model, self.map_params)
-        pos_str = gazebo_object.get_position_str()
-        self.__spawn_cube(pos_str)
-
     def __spawn_cube(self, pos_str):
         model_path = CUBE_PATH
         counter = self.cube_counter
@@ -274,6 +261,20 @@ class WorldCreator:
         self.SDF_ROOT.find("world").insert(0, model_root)
 
         self.cube_counter += 1
+
+    def __spawn_qr_cube(self, pos_str, size_str):
+        counter = self.qr_cube_counter
+        self.qr_cube_counter += 1
+        model_root = etree.parse(SAMPLE_QR_CUBE_PATH).getroot()
+        model_name = "qr_cube"
+
+        model_root.set("name", "{}_{}".format(model_name, counter))
+        model_root.find("pose").text = pos_str
+
+        link = model_root[1]
+        link.find("visual").find("material").find("script").find("name").text = 'QrCode{}'.format(counter)
+
+        self.SDF_ROOT.find("world").insert(0, model_root)
 
     def __create_empty_world(self):
         self.SDF_ROOT = etree.parse(EMPTY_WORLD_PATH).getroot()
