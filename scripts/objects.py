@@ -141,7 +141,7 @@ class Object:
         return SERIALIZATION_SUPPORT[data['name']].deserialize(data)
 
 
-class Wall():
+class Wall(Object):
     TYPE = ObjectType.WALL
 
     def __init__(self, point1, point2):
@@ -187,7 +187,7 @@ class Wall():
                     Point2D.from_list(data['pnts'][2:4]))
     
 
-class Door():
+class Door(Object):
     TYPE = ObjectType.DOOR
 
     def __init__(self, point1, point2):
@@ -232,7 +232,7 @@ class Door():
         return Door(Point2D.from_list(data['pnts'][0:2]), 
                     Point2D.from_list(data['pnts'][2:4]))
 
-class Window():
+class Window(Object):
     TYPE = ObjectType.WINDOW
 
     def __init__(self, point1, point2):

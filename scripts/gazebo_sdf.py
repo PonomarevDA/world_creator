@@ -36,36 +36,27 @@ class WorldCreator:
     qr_cube_counter = 0
 
     def __init__(self, map_params: MapParams):
-        """
-        @brief Constructor that create empty world with defined config
-        """
         self.map_params = map_params
         self.__create_empty_world()
 
-    def showTree(self):
-        """
-        @brief Print on console xml tree of current world
-        """
+    def show_tree(self):
         log.debug(etree.tostring(self.SDF_ROOT, pretty_print=True))
 
-    def writeWorldToFile(self, fileName):
-        """
-        @brief Write current world to file
-        """
+    def write_world_to_file(self, fileName):
         with open(fileName, 'wb') as f:
             f.write(etree.tostring(self.SDF_ROOT, pretty_print=True))
 
-    def addObject(self, obj: Object):
+    def add_object(self, obj: Object):
         FUNCTIONS_MAPPING = {
-            ObjectType.WALL: self.__addWall,
-            ObjectType.DOOR: self.__addDoor,
-            ObjectType.WINDOW: self.__addWindow,
-            ObjectType.SIGN: self.__addSign,
-            ObjectType.BOX: self.__addBox,
-            ObjectType.SQUARE: self.__addSquare,
-            ObjectType.TRAFFIC_LIGHT: self.__addTrafficLight,
-            ObjectType.CUBE: self.__addCube,
-            ObjectType.QR_CUBE: self.__addQrCube,
+            ObjectType.WALL: self.__add_wall,
+            ObjectType.DOOR: self.__add_door,
+            ObjectType.WINDOW: self.__add_window,
+            ObjectType.SIGN: self.__add_sign,
+            ObjectType.BOX: self.__add_box,
+            ObjectType.SQUARE: self.__add_square,
+            ObjectType.TRAFFIC_LIGHT: self.__add_traffic_light,
+            ObjectType.CUBE: self.__add_cube,
+            ObjectType.QR_CUBE: self.__add_qr_cube,
         }
 
         if obj.TYPE not in FUNCTIONS_MAPPING:
@@ -74,40 +65,40 @@ class WorldCreator:
 
         FUNCTIONS_MAPPING[obj.TYPE](obj)
 
-    def __addWall(self, wall):
+    def __add_wall(self, wall):
         gz_object = go.GazeboWall(wall, self.map_params)
 
         pos_str = gz_object.get_position_str()
         size_str = gz_object.get_size_str()
 
-        self.__spawnBox(pos_str, size_str)
+        self.__spawn_box(pos_str, size_str)
 
-    def __addDoor(self, door):
+    def __add_door(self, door):
         gz_object = go.GazeboDoor(door, self.map_params)
 
         pos_str = gz_object.get_position_str()
         size_str = gz_object.get_size_str()
 
-        self.__spawnBox(pos_str, size_str)
+        self.__spawn_box(pos_str, size_str)
 
-    def __addBox(self, box):
+    def __add_box(self, box):
         gz_object = go.GazeboBox(box, self.map_params)
 
         pos_str = gz_object.get_position_str()
         size_str = gz_object.get_size_str()
 
-        self.__spawnBox(pos_str, size_str)
+        self.__spawn_box(pos_str, size_str)
 
-    def __addSquare(self, square):
+    def __add_square(self, square):
         gz_object = go.GazeboSquare(square, self.map_params)
 
         size_str = gz_object.get_size_str()
-        pos_strs = gz_object.get_position_strs()
+        pos_strs = gz_object.get_position_str()
 
         for pos_str in pos_strs:
-            self.__spawnBox(pos_str, size_str)
+            self.__spawn_box(pos_str, size_str)
 
-    def __spawnBox(self, pos_str, size_str):
+    def __spawn_box(self, pos_str, size_str):
         self.box_counter += 1
         counter = self.box_counter
         model_root = etree.parse(SAMPLE_BOX_PATH).getroot()
@@ -127,15 +118,15 @@ class WorldCreator:
         link.find("visual").find("material").find("script").find("name").text = 'Gazebo/' + texture
         self.SDF_ROOT.find("world").insert(0, model_root)
 
-    def __addWindow(self, model):
+    def __add_window(self, model):
         gz_object = go.GazeboWindow(model, self.map_params)
 
         pos_str = gz_object.get_position_str()
         size_str = gz_object.get_size_str()
 
-        self.__spawnWindow(pos_str, size_str)
+        self.__spawn_window(pos_str, size_str)
 
-    def __spawnWindow(self, pos_str, size_str):
+    def __spawn_window(self, pos_str, size_str):
         self.window_counter += 1
         counter = self.window_counter
         model_root = etree.parse(SAMPLE_WINDOW_PATH).getroot()
@@ -154,15 +145,15 @@ class WorldCreator:
 
         self.SDF_ROOT.find("world").insert(0, model_root)
 
-    def __addQrCube(self, model):
+    def __add_qr_cube(self, model):
         gz_object = go.GazeboQrCube(model, self.map_params)
 
         pos_str = gz_object.get_position_str()
         size_str = None
 
-        self.__spawnQrCube(pos_str, size_str)
+        self.__spawn_qr_cube(pos_str, size_str)
 
-    def __spawnQrCube(self, pos_str, size_str):
+    def __spawn_qr_cube(self, pos_str, size_str):
         counter = self.qr_cube_counter
         self.qr_cube_counter += 1
         model_root = etree.parse(SAMPLE_QR_CUBE_PATH).getroot()
@@ -176,7 +167,7 @@ class WorldCreator:
 
         self.SDF_ROOT.find("world").insert(0, model_root)
 
-    def __addSign(self, sign):
+    def __add_sign(self, sign):
         gz_object = go.GazeboSign(sign, self.map_params)
 
         pos_str = gz_object.get_position_str()
@@ -195,9 +186,9 @@ class WorldCreator:
             log.error("Error: sign type \'{}\' is not supported".format(_type))
             return
 
-        self.__spawnSign(pos_str, SIGN_MODEL_MAP[_type])
+        self.__spawn_sign(pos_str, SIGN_MODEL_MAP[_type])
 
-    def __spawnSign(self, pos_str, _model_path):
+    def __spawn_sign(self, pos_str, _model_path):
         ### LEFT/RIGHT_BOT/TOP - in terms of rendered map
         model_path = _model_path.value
         counter = self.sign_counter
@@ -218,16 +209,16 @@ class WorldCreator:
 
         self.sign_counter += 1
 
-    def __addTrafficLight(self, trafficLight):
+    def __add_traffic_light(self, trafficLight):
         go_traf_light = go.GazeboTrafficLight(trafficLight, self.map_params)
         pos_str = go_traf_light.get_position_str()
-        self.__spawnTrafficLight(pos_str)
+        self.__spawn_traffic_light(pos_str)
 
         line_pos_str = go_traf_light.get_line_position_str()
         line_size_str = go_traf_light.get_line_size_str()
-        self.__spawnTrafficLightLine(line_pos_str, line_size_str)
+        self.__spawn_traffic_light_line(line_pos_str, line_size_str)
 
-    def __spawnTrafficLight(self, pos_str):
+    def __spawn_traffic_light(self, pos_str):
         model_path = TRAFFIC_LIGHT_PATH
         counter = self.traffic_light_counter
         model_name = "traffic_light"
@@ -247,7 +238,7 @@ class WorldCreator:
 
         self.traffic_light_counter += 1
 
-    def __spawnTrafficLightLine(self, pos_str, size_str):
+    def __spawn_traffic_light_line(self, pos_str, size_str):
         log.debug("traffic light line with pos: {}".format(pos_str))
 
         model_root = etree.parse(SAMPLE_LINE_PATH).getroot()
@@ -259,12 +250,12 @@ class WorldCreator:
 
         self.SDF_ROOT.find("world").insert(0, model_root)
 
-    def __addCube(self, model):
+    def __add_cube(self, model):
         gazebo_object = go.GazeboCube(model, self.map_params)
         pos_str = gazebo_object.get_position_str()
-        self.__spawnCube(pos_str)
+        self.__spawn_cube(pos_str)
 
-    def __spawnCube(self, pos_str):
+    def __spawn_cube(self, pos_str):
         model_path = CUBE_PATH
         counter = self.cube_counter
         model_name = "cube"
@@ -285,9 +276,6 @@ class WorldCreator:
         self.cube_counter += 1
 
     def __create_empty_world(self):
-        """
-        @brief Create sdf tree for empty world from file
-        """
         self.SDF_ROOT = etree.parse(EMPTY_WORLD_PATH).getroot()
 
         if self.map_params.scene == 'sky':

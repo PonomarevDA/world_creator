@@ -7,7 +7,7 @@ This script allow to create json file from data and sdf file from json.
 import json
 import logging as log
 import gazebo_sdf as gzs
-from objects import *
+from objects import MapParams, APP_VERSION
 
 # Cheet sheet
 """
@@ -95,11 +95,11 @@ def create_sdf(filepath: str, objects: dict, map_params: MapParams):
     for obj_type, objs in objects.items():
         if type(objs) is list:
             for obj in objs:
-                creator.addObject(obj)
+                creator.add_object(obj)
         else:
-            creator.addObject(objs)
+            creator.add_object(objs)
 
     try:
-        creator.writeWorldToFile(filepath)
+        creator.write_world_to_file(filepath)
     except:
         log.error("Failed to write WORLD to file")

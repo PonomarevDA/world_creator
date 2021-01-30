@@ -36,6 +36,10 @@ class GazeboObject():
         self.map_params = map_params
         self.base = base
 
+    def get_position_str(self):
+        print("get_position_str() is not implement")
+        return ''
+
     def _swap_axes(self, pos):
         pos.y = self.map_params.n_cells.y - pos.y
 
@@ -150,7 +154,7 @@ class GazeboSquare(GazeboObject):
         if type(base) is not objects.Square:
             raise Exception('Invalid class passed')
 
-    def get_position_strs(self):
+    def get_position_str(self):
         results = []
         center = deepcopy(self.base.pos)
 
