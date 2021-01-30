@@ -26,7 +26,7 @@ class ImagesPaths():
     FORWARD_OR_RIGHT = os.path.join(PATH_TO_IMAGE, 'forward-right-sign/frwd_right.png')
 
 TRAFFIC_LIGHT_IMG_PATH = 'models/traffic-light.png'
-CUBE_IMG_PATH = 'models/cube/image.png'
+CUBE_IMG_PATH = 'models/rirpc_box/image.png'
 QR_CUBE_IMG_PATH = 'models/qr_code/materials/textures/qr_0.png'
 
 def sign_path_to_sign_type(img_path):
