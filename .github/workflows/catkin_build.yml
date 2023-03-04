@@ -1,0 +1,27 @@
+name: catkin_build
+
+on: [push]
+
+defaults:
+  run:
+    shell: bash
+jobs:
+  catkin_build:
+    strategy:
+      matrix:
+        version: [melodic, noetic]
+    runs-on: ubuntu-22.04
+    container:
+      image: ros:${{ matrix.version }}
+    steps:
+      - run: apt-get update && apt-get upgrade -y && apt-get install -y python3-pip
+
+      - uses: actions/checkout@v2
+        with:
+          path: catkin_ws/src/world_creator
+
+      - name: Install requirements
+        run: ./catkin_ws/src/world_creator/install.sh
+
+      - name: catkin build
+        run: source /opt/ros/${{ matrix.version }}/setup.bash && cd catkin_ws && catkin build
