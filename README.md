@@ -1,4 +1,5 @@
-# Gazebo SDF World Creator
+# Gazebo SDF World Creator ![catkin_build](https://github.com/PonomarevDA/world_creator/actions/workflows/catkin_build.yml/badge.svg?branch=main)
+
 
 This is a ROS package that allows quick and easy creation of Gazebo worlds using a GUI.
 
