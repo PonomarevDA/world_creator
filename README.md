@@ -1,18 +1,18 @@
-# Gazebo sdf world creator
+# Gazebo SDF World Creator
 
-This is ROS package that allows quickly and easily create Gazebo worlds using GUI.
+This is a ROS package that allows quick and easy creation of Gazebo worlds using a GUI.
 
 ![Alt text](Img/fpi.jpg?raw=true "fpi")
 ![Alt text](Img/autonet.png?raw=true "autonet")
 
 ## Preparation
 
-You must have installed Gazebo.
+You must have Gazebo installed.
 
-Then you should install required packages:
+You should then install the required packages:
 
 ```bash
-pip3 install -r requirements.txt
+./install.sh
 ```
 
 ## Usage
@@ -28,15 +28,15 @@ pip3 install -r requirements.txt
 ```bash
 ./start_creator.sh --cell 0.5x0.5 --size 30x30 --name worlds/example
 ```
-- Argument --name specify the output files prefix. Generete button will always generate 2 files: example.json and example.world
+--name specifies the prefix of the output files. The generated button will always generate 2 files: example.json and example.world
 
 **Loading of creating world**
 
 ```bash
 ./start_creator.sh --load worlds/example.json --name worlds/example
 ```
-- Argument --load specify the input json file
-- Argument --name specify the output prefix of generated files
+--load specifies the input json file
+--name specifies the output prefix of generated files
 
 **Running created gazebo world**
 
@@ -50,7 +50,7 @@ If you want to run a world in your application, don't forget to set up `GAZEBO_M
 
 `world_creator.py` is the main script. It runs GUI and parses arguments.
 
-`gui.py` is the frontend of this program. It creates main window, lables, buttons, sets callbacks and allow to create json and world files.
+`gui.py` is the frontend of this program. It creates main window, labels, buttons, sets callbacks and allow to create json and world files.
 
 `converter.py` allows to convert frontend data to json format, load json data to frontend and to backend.
 
